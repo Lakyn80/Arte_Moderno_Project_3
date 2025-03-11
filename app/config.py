@@ -11,7 +11,7 @@ class Config:
     WTF_CSRF_ENABLED = True
 
     # Databáze – použije PostgreSQL z Renderu, jinak SQLite pro vývoj
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///arte_moderno.db')
+    SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')               
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Uploady
