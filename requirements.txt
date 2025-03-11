@@ -35,3 +35,4 @@ SQLAlchemy==2.0.37
 sympy==1.13.1
 tokenizers==0.21.0
 torch==2.5.1
+python-dotenv
