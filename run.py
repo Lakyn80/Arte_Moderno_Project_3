@@ -7,3 +7,4 @@ if __name__ == '__main__':
     # Render potřebuje, aby Flask běžel na 0.0.0.0 a dynamickém portu
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+    

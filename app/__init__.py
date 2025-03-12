@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user
 from flask_wtf import CSRFProtect  # Správný import CSRF ochrany
 
+
 # Inicializace rozšíření
 db = SQLAlchemy()
 migrate = Migrate()
@@ -46,10 +47,12 @@ def create_app():
     from app.views.routes import views
     from app.views.admin_routes import admin
     from app.views.cart_routes import cart
+    from app.views.checkout_routes import checkout
 
     app.register_blueprint(views)
     app.register_blueprint(admin)
     app.register_blueprint(cart)
+    app.register_blueprint(checkout)
 
     # Injectování počtu položek v košíku do kontextu šablon
     @app.context_processor

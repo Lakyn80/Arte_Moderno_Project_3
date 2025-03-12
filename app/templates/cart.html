@@ -56,6 +56,9 @@ content %}
       <a href="{{ url_for('views.galerie') }}" class="btn-continue"
         >Pokračovat v nakupování</a
       >
+      <a href="{{ url_for('checkout.process_checkout') }}" class="btn-order"
+        >Přejít k objednávce</a
+      >
     </div>
     {% else %}
     <div class="empty-cart">
@@ -189,6 +192,18 @@ content %}
     color: #666;
     margin-bottom: 20px;
     font-size: 1.1em;
+  }
+  .btn-order {
+    display: inline-block;
+    background-color: #ffc107;
+    color: black;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-left: 10px;
+  }
+  .btn-order:hover {
+    background-color: #e0a800;
   }
 </style>
 
