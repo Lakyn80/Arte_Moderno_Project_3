@@ -1,42 +1,95 @@
-<form
-  method="POST"
-  action="{{ url_for('admin.add_product') }}"
-  enctype="multipart/form-data"
->
+{% extends "layout.html" %}
+{% block title %}{{ 'Upravit produkt' if product else 'Přidat produkt' }}{% endblock %}
+
+{% block content %}
+<h2>{{ 'Upravit produkt' if product else 'Přidat nový produkt' }}</h2>
+
+<form method="POST" enctype="multipart/form-data">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
   <label for="position_id">ID pozice:</label>
-  <input
-    type="number"
-    name="position_id"
-    id="position_id"
-    required
-  /><br /><br />
+  <input type="number" name="position_id" id="position_id" value="{{ product.position_id if product else '' }}" required /><br /><br />
 
   <label for="name">Název produktu:</label>
-  <input type="text" name="name" id="name" required /><br /><br />
+  <input type="text" name="name" id="name" value="{{ product.name if product else '' }}" required /><br /><br />
 
   <label for="price">Cena (Kč):</label>
-  <input
-    type="number"
-    step="0.01"
-    name="price"
-    id="price"
-    required
-  /><br /><br />
+  <input type="number" step="0.01" name="price" id="price" value="{{ product.price if product else '' }}" required /><br /><br />
 
   <label for="stock">Počet kusů na skladě:</label>
-  <input type="number" name="stock" id="stock" required /><br /><br />
+  <input type="number" name="stock" id="stock" value="{{ product.stock if product else 1 }}" min="0" required /><br /><br />
 
   <label for="description">Popis:</label><br />
-  <textarea name="description" id="description" rows="4"></textarea><br /><br />
+  <textarea name="description" id="description" rows="4">{{ product.description if product else '' }}</textarea><br /><br />
 
   <label for="image">Obrázek produktu:</label>
   <input type="file" name="image" id="image" accept="image/*" /><br /><br />
 
-  <button type="submit">Přidat produkt</button>
+  {% if product and product.image_filename %}
+    <p>Aktuální obrázek:</p>
+    <img src="{{ url_for('static', filename='uploads/' ~ product.image_filename) }}" alt="{{ product.name }}" class="product-thumbnail">
+  {% endif %}
+
+  <button type="submit">
+    {{ 'Uložit změny' if product else 'Přidat produkt' }}
+  </button>
 </form>
 
 <a href="{{ url_for('admin.dashboard') }}">
   <button>⬅️ Zpět na admin panel</button>
 </a>
+
+<!-- Styly -->
+<style>
+  form {
+    width: 60%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fafafa;
+  }
+
+  form label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+
+  form input[type="text"],
+  form input[type="number"],
+  form input[type="file"],
+  form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  .btn-submit {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .btn-submit:hover {
+    background-color: #218838;
+  }
+
+  .product-thumbnail {
+    margin-top: 10px;
+    width: 100px;
+    height: auto;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+</style>
+{% endblock %}
