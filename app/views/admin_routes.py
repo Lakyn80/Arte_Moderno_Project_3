@@ -5,10 +5,9 @@ from functools import wraps
 import os
 
 from app import db
-from app.models import Product
+from app.models import Product, OrderItem, CartItem
 
 admin = Blueprint("admin", __name__, url_prefix="/admin")
-
 
 def admin_required(f):
     @wraps(f)
@@ -19,13 +18,11 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-
 @admin.route("/dashboard")
 @admin_required
 def dashboard():
     products = Product.query.all()
     return render_template("admin_dashboard.html", products=products)
-
 
 @admin.route("/add_product", methods=["GET", "POST"])
 @admin_required
@@ -36,7 +33,6 @@ def add_product():
         description = request.form["description"]
         position_id = int(request.form["position_id"])
         stock = int(request.form["stock"])
-
         image_file = request.files.get("image")
         image_filename = None
 
@@ -63,7 +59,6 @@ def add_product():
         return redirect(url_for("admin.dashboard"))
 
     return render_template("add_product.html", product=None)
-
 
 @admin.route("/edit_product/<int:product_id>", methods=["GET", "POST"])
 @admin_required
@@ -92,17 +87,17 @@ def edit_product(product_id):
 
     return render_template("add_product.html", product=product)
 
-
+# ✅ Soft delete (deaktivace)
 @admin.route("/delete_product/<int:product_id>", methods=["POST"])
 @admin_required
 def delete_product(product_id):
     product = Product.query.get_or_404(product_id)
     product.is_active = False
     db.session.commit()
-    flash("Produkt byl deaktivován (soft delete).", "warning")
+    flash("Produkt byl deaktivován.", "warning")
     return redirect(url_for("admin.dashboard"))
 
-
+# ✅ Reaktivace
 @admin.route("/reactivate_product/<int:product_id>", methods=["POST"])
 @admin_required
 def reactivate_product(product_id):
@@ -110,4 +105,18 @@ def reactivate_product(product_id):
     product.is_active = True
     db.session.commit()
     flash("Produkt byl opět aktivován.", "success")
+    return redirect(url_for("admin.dashboard"))
+
+# ✅ Hard delete (trvalé odstranění včetně vazeb)
+@admin.route("/hard_delete_product/<int:product_id>", methods=["POST"])
+@admin_required
+def hard_delete_product(product_id):
+    product = Product.query.get_or_404(product_id)
+
+    CartItem.query.filter_by(product_id=product.id).delete()
+    OrderItem.query.filter_by(product_id=product.id).delete()
+
+    db.session.delete(product)
+    db.session.commit()
+    flash("Produkt byl trvale smazán včetně všech vazeb.", "danger")
     return redirect(url_for("admin.dashboard"))

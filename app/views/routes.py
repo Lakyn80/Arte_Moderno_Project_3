@@ -19,12 +19,13 @@ def home():
 
 @views.route("/galerie")
 def galerie():
-    products = Product.query.filter_by(is_active=True).all()  # pouze aktivní produkty
+    products = Product.query.filter(Product.is_active == True, Product.stock > 0).all()
     print("DEBUG: Produkty v galerii:")
     for product in products:
-        print(f"ID: {product.id}, Název: {product.name}, Popis: {product.description}, Cena: {product.price}")
-    
+        print(f"ID: {product.id}, Název: {product.name}, Popis: {product.description}, Cena: {product.price}, Sklad: {product.stock}")
+
     return render_template("galerie.html", products=products)
+
 
 
 
