@@ -1,29 +1,76 @@
-{% extends "layout.html" %}
-{% block title %}Objednávka dokončena{% endblock %}
-{% block content %}
-<div class="checkout-success">
-  <h2>Objednávka úspěšně dokončena!</h2>
-  <a href="{{ url_for('views.home') }}" class="btn-continue">Zpět na hlavní stránku</a>
-</div>
+{% extends "layout.html" %} {% block title %}Rekapitulace objednávky{% endblock
+%} {% block content %}
+<h2>🧾 Rekapitulace objednávky</h2>
+
+<form method="POST" action="{{ url_for('checkout.confirm_order') }}">
+  <h3>🛒 Vaše produkty:</h3>
+  <ul>
+    {% for item in cart_items %}
+    <li>
+      {{ item.product.name }} – {{ item.quantity }} ks × {{ item.product.price
+      }} Kč = <strong>{{ item.quantity * item.product.price }} Kč</strong>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <h3>💰 Celková cena: <strong>{{ total_price }} Kč</strong></h3>
+
+  <hr />
+  <h3>📦 Doručovací údaje:</h3>
+  <label for="address">Adresa <span style="color: red">*</span></label
+  ><br />
+  <textarea name="address" id="address" rows="4" required>
+{{ current_user.address or '' }}</textarea
+  >
+
+  <h3>📑 Fakturační údaje (volitelné):</h3>
+  <label for="billing_address">Fakturační adresa</label><br />
+  <textarea name="billing_address" id="billing_address" rows="4">
+{{ current_user.billing_address or '' }}</textarea
+  >
+
+  <br /><br />
+  <button type="submit" class="btn-order">✅ Odeslat objednávku</button>
+
+  <p class="note-info">
+    Po odeslání objednávky obdržíte potvrzovací e-mail a my vás budeme brzy
+    kontaktovat.
+  </p>
+</form>
 
 <style>
-.checkout-success {
-  text-align: center;
-  padding: 50px;
-}
-.checkout-success h2 {
-  color: #28a745;
-  margin-bottom: 20px;
-}
-.btn-continue {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-}
-.btn-continue:hover {
-  background-color: #0056b3;
-}
+  form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+  }
+
+  .btn-order {
+    padding: 10px 20px;
+    background-color: #28a745;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .btn-order:hover {
+    background-color: #218838;
+  }
+
+  .note-info {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #555;
+    text-align: center;
+  }
 </style>
 {% endblock %}
