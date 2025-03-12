@@ -3,12 +3,15 @@
 <h2>🧾 Rekapitulace objednávky</h2>
 
 <form method="POST" action="{{ url_for('checkout.confirm_order') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
   <h3>🛒 Vaše produkty:</h3>
   <ul>
     {% for item in cart_items %}
     <li>
       {{ item.product.name }} – {{ item.quantity }} ks × {{ item.product.price
-      }} Kč = <strong>{{ item.quantity * item.product.price }} Kč</strong>
+      }} Kč =
+      <strong>{{ item.quantity * item.product.price }} Kč</strong>
     </li>
     {% endfor %}
   </ul>
@@ -31,17 +34,17 @@
 
   <br /><br />
   <button type="submit" class="btn-order">✅ Odeslat objednávku</button>
-
-  <p class="note-info">
-    Po odeslání objednávky obdržíte potvrzovací e-mail a my vás budeme brzy
-    kontaktovat.
-  </p>
 </form>
 
+<p class="note-info">
+  Po odeslání objednávky obdržíte potvrzovací e-mail a my vás budeme brzy
+  kontaktovat.
+</p>
 <style>
   form {
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
+    padding: 20px;
   }
 
   textarea {
@@ -50,6 +53,7 @@
     border-radius: 5px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
+    resize: vertical;
   }
 
   .btn-order {
@@ -64,6 +68,11 @@
 
   .btn-order:hover {
     background-color: #218838;
+  }
+
+  ul {
+    padding-left: 20px;
+    margin-bottom: 20px;
   }
 
   .note-info {
