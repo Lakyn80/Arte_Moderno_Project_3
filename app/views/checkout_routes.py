@@ -31,8 +31,10 @@ def process_checkout():
         )
         db.session.add(order_item)
 
-        # Snížení skladu
+        # Snížení skladu a případná deaktivace, pokud je vyprodán
         item.product.stock -= item.quantity
+        if item.product.stock <= 0:
+            item.product.is_active = False
 
     # Vymazání košíku
     for item in cart_items:
@@ -41,3 +43,4 @@ def process_checkout():
     db.session.commit()
     flash("Objednávka byla úspěšně vytvořena!", "success")
     return render_template("checkout_success.html", order=order)
+

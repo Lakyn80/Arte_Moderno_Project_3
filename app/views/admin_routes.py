@@ -8,6 +8,7 @@ from flask_login import current_user, login_user, login_required
 from app.models import User  # Import modelu User
 from app import bcrypt       # Import bcrypt pro ověřování hesla
 from app.models import CartItem
+from app.models import OrderItem
 
 admin = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -165,16 +166,55 @@ def edit_product(product_id):
 @admin.route("/delete_product/<int:product_id>", methods=["POST"])
 @admin_required
 def delete_product(product_id):
+    """Soft deletion: Deaktivace produktu (produkt se nezobrazí v galerii)."""
     product = Product.query.get_or_404(product_id)
-    db.session.delete(product)
-    db.session.commit()
-
-    # Odstranění osamocených položek z košíku
-    orphaned_items = CartItem.query.filter(~CartItem.product.has()).all()
-    for item in orphaned_items:
+    product.is_active = False  # nastavíme produkt jako neaktivní
+    try:
+        db.session.commit()
+        flash("Produkt byl úspěšně deaktivován.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("Při deaktivaci produktu došlo k chybě.", "error")
+        return redirect(url_for("admin.dashboard"))
+    
+    # Odstraníme případné položky v košíku, které odkazují na tento produkt
+    cart_items = CartItem.query.filter_by(product_id=product.id).all()
+    for item in cart_items:
         db.session.delete(item)
     db.session.commit()
+    
+    return redirect(url_for("admin.dashboard"))
 
-    flash("Produkt byl úspěšně smazán!", "success")
+@admin.route("/hard_delete_product/<int:product_id>", methods=["POST"])
+@admin_required
+def hard_delete_product(product_id):
+    """Fyzické smazání produktu z databáze, povoleno pouze u produktů, které nejsou součástí objednávek."""
+    product = Product.query.get_or_404(product_id)
+    order_item_count = OrderItem.query.filter_by(product_id=product.id).count()
+    if order_item_count > 0:
+        flash("Produkt je součástí objednávek a nelze jej trvale smazat. Použijte deaktivaci.", "error")
+        return redirect(url_for("admin.dashboard"))
+    try:
+        db.session.delete(product)
+        db.session.commit()
+        flash("Produkt byl trvale smazán.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("Při trvalém smazání produktu došlo k chybě.", "error")
+    return redirect(url_for("admin.dashboard"))
+
+
+
+@admin.route("/reactivate_product/<int:product_id>", methods=["POST"])
+@admin_required
+def reactivate_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    product.is_active = True  # Nastavíme produkt jako aktivní
+    try:
+        db.session.commit()
+        flash("Produkt byl úspěšně reaktivován.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("Při reaktivaci produktu došlo k chybě.", "error")
     return redirect(url_for("admin.dashboard"))
 

@@ -17,7 +17,6 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f"<User {self.username}>"
 
-
 # --------------------
 # Dotazy (kontaktní formulář)
 # --------------------
@@ -32,9 +31,8 @@ class Inquiry(db.Model):
     def __repr__(self):
         return f"<Inquiry from {self.name}, {self.email}>"
 
-
 # --------------------
-# Produkty (např. obrazy)
+# Produkty (např. obrazy) s podporou soft deletion
 # --------------------
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -44,6 +42,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     image_filename = db.Column(db.String(300), nullable=True)
     stock = db.Column(db.Integer, nullable=False, default=0)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)  # Příznak aktivity produktu
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def get_image_url(self):
@@ -53,7 +52,6 @@ class Product(db.Model):
 
     def __repr__(self):
         return f"<Product {self.name}, Position {self.position_id}>"
-
 
 # --------------------
 # Položky v košíku
@@ -68,7 +66,6 @@ class CartItem(db.Model):
 
     def __repr__(self):
         return f"<CartItem User {self.user_id}, Product {self.product_id}, Qty {self.quantity}>"
-
 
 # --------------------
 # Objednávky (checkout)
@@ -85,7 +82,6 @@ class Order(db.Model):
     def __repr__(self):
         return f"<Order #{self.id} - User {self.user_id} - {self.status}>"
 
-
 # --------------------
 # Položky objednávky
 # --------------------
@@ -94,7 +90,7 @@ class OrderItem(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    price_per_item = db.Column(db.Float, nullable=False)  # <-- Přidej tento řádek
+    price_per_item = db.Column(db.Float, nullable=False)
 
     order = db.relationship('Order', backref=db.backref('items', lazy=True))
     product = db.relationship('Product')
