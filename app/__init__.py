@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user
-from flask_wtf import CSRFProtect  # CSRF ochrana
+from flask_wtf import CSRFProtect
 
 # Inicializace rozšíření
 db = SQLAlchemy()
@@ -31,7 +31,7 @@ def create_app():
     login_manager.login_message_category = "info"
 
     # Import modelů až po inicializaci rozšíření
-    from app.models import User, CartItem  # Importy musí být po init_app()
+    from app.models import User, CartItem
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -48,7 +48,7 @@ def create_app():
     from app.views.checkout_routes import checkout
 
     app.register_blueprint(views)
-    app.register_blueprint(admin, url_prefix="/admin")  # ✅ důležitý prefix!
+    app.register_blueprint(admin, url_prefix="/admin")
     app.register_blueprint(cart)
     app.register_blueprint(checkout)
 

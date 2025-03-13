@@ -1,32 +1,33 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
-from app.models import Inquiry
-from app import db, mail  # importujeme db a mail z __init__.py
-from flask_mail import Message
-from app import db, bcrypt
-from app.models import User
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_login import login_user, current_user, logout_user, login_required
-from app.models import Product
-from app.models import Inquiry, User, Product, CartItem
-from flask import session
+from flask_mail import Message
 from datetime import datetime
 
+from app import db, bcrypt, mail
+from app.models import User, Product, Inquiry, CartItem
+from app.forms.forms import ProfileForm
+
+
+
+# Blueprints
 views = Blueprint("views", __name__)
 cart = Blueprint("cart", __name__, url_prefix="/cart")
 
+
+# ---------- DOMOVSKÁ STRÁNKA ----------
 @views.route("/", methods=["GET"])
 def home():
-    return render_template("home.html")  # jen příklad
+    return render_template("home.html")
 
+
+# ---------- GALERIE ----------
 @views.route("/galerie")
 def galerie():
     products = Product.query.filter(Product.is_active == True, Product.stock > 0).all()
-    print("DEBUG: Produkty v galerii:")
-    for product in products:
-        print(f"ID: {product.id}, Název: {product.name}, Popis: {product.description}, Cena: {product.price}, Sklad: {product.stock}")
-
     return render_template("galerie.html", products=products)
 
 
+# ---------- KONTAKTNÍ FORMULÁŘ ----------
 @views.route('/kontakt', methods=['GET', 'POST'])
 def kontakt():
     if request.method == 'POST':
@@ -58,11 +59,14 @@ def kontakt():
     return render_template('kontakt.html')
 
 
+# ---------- VÝPIS DOTAZŮ (např. pro admina) ----------
 @views.route("/inquiries")
 def list_inquiries():
     inquiries = Inquiry.query.all()
     return render_template("list_inquiries.html", inquiries=inquiries)
 
+
+# ---------- REGISTRACE ----------
 @views.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
@@ -85,8 +89,8 @@ def register():
             return redirect(url_for("views.register"))
 
         hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-        new_user = User(username=username, email=email, password=hashed_password, role='user')  # Role je nastavená na 'user'
-        
+        new_user = User(username=username, email=email, password=hashed_password, role='user')
+
         db.session.add(new_user)
         db.session.commit()
 
@@ -97,6 +101,7 @@ def register():
     return render_template("register.html")
 
 
+# ---------- PŘIHLÁŠENÍ ----------
 @views.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
@@ -110,8 +115,6 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if user and bcrypt.check_password_hash(user.password, password):
-           
-
             login_user(user)
             flash("Přihlášení úspěšné!", "success")
             return redirect(url_for("views.home"))
@@ -121,20 +124,32 @@ def login():
     return render_template("login.html")
 
 
-
+# ---------- ODHLÁŠENÍ ----------
 @views.route("/logout")
 @login_required
 def logout():
-    """Odhlásí uživatele a přesměruje ho na homepage."""
-    logout_user()  # Flask-Login funkce, zruší session pro daného uživatele
+    logout_user()
     flash("Byl jste úspěšně odhlášen.", "info")
     return redirect(url_for("views.home"))
 
 
+# ---------- MŮJ PROFIL (WTForms) ----------
+@views.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    form = ProfileForm(obj=current_user)
+    if form.validate_on_submit():
+        form.populate_obj(current_user)
+        db.session.commit()
+        flash("Profil byl úspěšně uložen.", "success")
+        return redirect(url_for('views.profile'))
+    return render_template('profile.html', form=form)
+
+
+# ---------- KOŠÍK – PŘIDAT PRODUKT ----------
 @cart.route("/add", methods=["POST"])
 @login_required
 def add_to_cart():
-    """Přidá produkt do košíku (nebo zvýší množství)"""
     data = request.get_json()
     product_id = data.get("product_id")
 
@@ -145,7 +160,7 @@ def add_to_cart():
     cart_item = CartItem.query.filter_by(user_id=current_user.id, product_id=product_id).first()
 
     if cart_item:
-        cart_item.quantity += 1  # Zvýší množství
+        cart_item.quantity += 1
     else:
         cart_item = CartItem(user_id=current_user.id, product_id=product_id, quantity=1)
         db.session.add(cart_item)
@@ -153,10 +168,11 @@ def add_to_cart():
     db.session.commit()
     return jsonify({"message": "Produkt přidán do košíku"}), 200
 
+
+# ---------- KOŠÍK – ODEBRAT PRODUKT ----------
 @cart.route("/remove", methods=["POST"])
 @login_required
 def remove_from_cart():
-    """Odebere produkt z košíku"""
     data = request.get_json()
     product_id = data.get("product_id")
 
@@ -168,10 +184,11 @@ def remove_from_cart():
     db.session.commit()
     return jsonify({"message": "Produkt odebrán z košíku"}), 200
 
+
+# ---------- KOŠÍK – ZOBRAZIT OBSAH ----------
 @cart.route("/view", methods=["GET"])
 @login_required
 def view_cart():
-    """Vrátí obsah košíku pro přihlášeného uživatele"""
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
 
     cart_data = [
@@ -187,34 +204,3 @@ def view_cart():
     ]
 
     return jsonify(cart_data), 200
-
-@views.route("/profil", methods=["GET", "POST"])
-@login_required
-def profil():
-    if request.method == "POST":
-        current_user.first_name = request.form.get("first_name")
-        current_user.last_name = request.form.get("last_name")
-        current_user.phone = request.form.get("phone")
-        current_user.address = request.form.get("address")
-        current_user.billing_address = request.form.get("billing_address")
-        current_user.city = request.form.get("city")
-        current_user.postal_code = request.form.get("postal_code")
-        current_user.country = request.form.get("country")
-        current_user.company = request.form.get("company")
-        current_user.ico = request.form.get("ico")
-        current_user.dic = request.form.get("dic")
-        current_user.note = request.form.get("note")
-
-        birth_date_str = request.form.get("birth_date")
-        if birth_date_str:
-            try:
-                current_user.birth_date = datetime.strptime(birth_date_str, "%Y-%m-%d")
-            except ValueError:
-                flash("Neplatný formát data narození (očekáváno RRRR-MM-DD)", "danger")
-
-        db.session.commit()
-        flash("Profil byl aktualizován.", "success")
-        return redirect(url_for("views.profil"))
-
-    return render_template("profil.html", user=current_user)
-
