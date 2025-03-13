@@ -1,7 +1,5 @@
-{% extends "layout.html" %}
-{% block title %}Admin Panel{% endblock %}
-
-{% block content %}
+{% extends "layout.html" %} {% block title %}Admin Panel{% endblock %} {% block
+content %}
 <h2>Admin Panel - ArteModerno</h2>
 
 <!-- Odkaz na odhlášení -->
@@ -9,11 +7,17 @@
 
 <!-- Sekce pro správu produktů -->
 <h3>Správa produktů</h3>
-<a href="{{ url_for('admin.add_product') }}" class="btn-add-product">➕ Přidat nový produkt</a>
+<a href="{{ url_for('admin.add_product') }}" class="btn-add-product"
+  >➕ Přidat nový produkt</a
+>
 
 <!-- Tabulka produktů -->
 <table class="admin-table">
   <thead>
+    <a href="{{ url_for('admin.admin_change_password') }}" class="btn-edit"
+      >🔑 Změnit heslo</a
+    >
+
     <tr>
       <th>Obrázek</th>
       <th>ID</th>
@@ -29,7 +33,11 @@
     <tr>
       <td>
         {% if product.image_filename %}
-        <img src="{{ url_for('static', filename='uploads/' ~ product.image_filename) }}" alt="{{ product.name }}" class="product-thumbnail" />
+        <img
+          src="{{ url_for('static', filename='uploads/' ~ product.image_filename) }}"
+          alt="{{ product.name }}"
+          class="product-thumbnail"
+        />
         {% else %}
         <span>Žádný obrázek</span>
         {% endif %}
@@ -40,29 +48,63 @@
       <td>{{ product.stock }}</td>
       <td>
         {% if product.is_active %}
-          <span class="status-active">Aktivní</span>
+        <span class="status-active">Aktivní</span>
         {% else %}
-          <span class="status-inactive">Deaktivován</span>
+        <span class="status-inactive">Deaktivován</span>
         {% endif %}
       </td>
       <td class="actions">
         {% if product.is_active %}
-        <a href="{{ url_for('admin.edit_product', product_id=product.id) }}" class="btn-edit">✏️ Upravit</a>
+        <a
+          href="{{ url_for('admin.edit_product', product_id=product.id) }}"
+          class="btn-edit"
+          >✏️ Upravit</a
+        >
 
-        <form method="POST" action="{{ url_for('admin.delete_product', product_id=product.id) }}" class="delete-form">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button type="submit" class="btn-delete" onclick="return confirm('Opravdu chcete deaktivovat tento produkt?')">🗑️ Deaktivovat</button>
+        <form
+          method="POST"
+          action="{{ url_for('admin.delete_product', product_id=product.id) }}"
+          class="delete-form"
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button
+            type="submit"
+            class="btn-delete"
+            onclick="return confirm('Opravdu chcete deaktivovat tento produkt?')"
+          >
+            🗑️ Deaktivovat
+          </button>
         </form>
 
         {% else %}
-        <form method="POST" action="{{ url_for('admin.reactivate_product', product_id=product.id) }}" class="reactivate-form">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button type="submit" class="btn-reactivate" onclick="return confirm('Opravdu chcete reaktivovat tento produkt?')">🔄 Reaktivovat</button>
+        <form
+          method="POST"
+          action="{{ url_for('admin.reactivate_product', product_id=product.id) }}"
+          class="reactivate-form"
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button
+            type="submit"
+            class="btn-reactivate"
+            onclick="return confirm('Opravdu chcete reaktivovat tento produkt?')"
+          >
+            🔄 Reaktivovat
+          </button>
         </form>
 
-        <form method="POST" action="{{ url_for('admin.hard_delete_product', product_id=product.id) }}" class="hard-delete-form">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button type="submit" class="btn-hard-delete" onclick="return confirm('Opravdu chcete produkt trvale smazat?')">❌ Trvale smazat</button>
+        <form
+          method="POST"
+          action="{{ url_for('admin.hard_delete_product', product_id=product.id) }}"
+          class="hard-delete-form"
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button
+            type="submit"
+            class="btn-hard-delete"
+            onclick="return confirm('Opravdu chcete produkt trvale smazat?')"
+          >
+            ❌ Trvale smazat
+          </button>
         </form>
         {% endif %}
       </td>
@@ -73,13 +115,15 @@
 
 <!-- Styly -->
 <style>
-  h2, h3 {
+  h2,
+  h3 {
     color: #333;
     text-align: center;
     margin-bottom: 20px;
   }
 
-  .btn-logout, .btn-add-product {
+  .btn-logout,
+  .btn-add-product {
     display: inline-block;
     margin-bottom: 20px;
     padding: 10px 15px;
@@ -94,7 +138,8 @@
     background-color: #28a745;
   }
 
-  .btn-logout:hover, .btn-add-product:hover {
+  .btn-logout:hover,
+  .btn-add-product:hover {
     opacity: 0.9;
   }
 
@@ -105,7 +150,8 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .admin-table th, .admin-table td {
+  .admin-table th,
+  .admin-table td {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: center;
@@ -122,7 +168,8 @@
     border-radius: 5px;
   }
 
-  .actions a, .actions button {
+  .actions a,
+  .actions button {
     margin: 3px;
     padding: 5px 10px;
     border: none;
@@ -167,7 +214,9 @@
     background-color: #000;
   }
 
-  .delete-form, .reactivate-form, .hard-delete-form {
+  .delete-form,
+  .reactivate-form,
+  .hard-delete-form {
     display: inline;
   }
 

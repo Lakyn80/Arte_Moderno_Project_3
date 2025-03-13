@@ -145,3 +145,18 @@ def admin_login():
 
     return render_template("admin_login.html", form=form)
 
+from app.forms.admin_forms import AdminChangePasswordForm
+
+@admin.route("/change_password", methods=["GET", "POST"])
+@admin_required
+def admin_change_password():
+    form = AdminChangePasswordForm()
+    if form.validate_on_submit():
+        if not bcrypt.check_password_hash(current_user.password, form.old_password.data):
+            flash("❌ Staré heslo není správné.", "danger")
+        else:
+            current_user.password = bcrypt.generate_password_hash(form.new_password.data).decode("utf-8")
+            db.session.commit()
+            flash("✅ Heslo bylo úspěšně změněno.", "success")
+            return redirect(url_for("admin.dashboard"))
+    return render_template("admin_change_password.html", form=form)
