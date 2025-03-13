@@ -5,72 +5,87 @@ content %}
 <form method="POST">
   {{ form.hidden_tag() }}
 
-  <label>{{ form.first_name.label }}</label>
+  <label>Email</label><br />
+  <input
+    type="email"
+    value="{{ current_user.email }}"
+    readonly
+    size="40"
+  /><br /><br />
+
+  <label>{{ form.first_name.label }}</label><br />
   {{ form.first_name(size=40) }} {% for error in form.first_name.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br />
 
-  <label>{{ form.last_name.label }}</label>
+  <label>{{ form.last_name.label }}</label><br />
   {{ form.last_name(size=40) }} {% for error in form.last_name.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br />
 
-  <label>{{ form.phone.label }}</label>
+  <label>{{ form.phone.label }}</label><br />
   {{ form.phone(size=40) }} {% for error in form.phone.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br />
 
-  <label>{{ form.address.label }}</label>
+  <label>{{ form.address.label }}</label><br />
   {{ form.address(rows=2, cols=60) }} {% for error in form.address.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br />
 
-  <label>{{ form.billing_address.label }}</label>
+  <label>{{ form.billing_address.label }}</label><br />
   {{ form.billing_address(rows=2, cols=60) }} {% for error in
   form.billing_address.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br />
 
-  <label>{{ form.city.label }}</label>
+  <label>{{ form.city.label }}</label><br />
   {{ form.city(size=40) }} {% for error in form.city.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br />
 
-  <label>{{ form.postal_code.label }}</label>
+  <label>{{ form.postal_code.label }}</label><br />
   {{ form.postal_code(size=20) }} {% for error in form.postal_code.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br />
 
-  <label>{{ form.country.label }}</label>
+  <label>{{ form.country.label }}</label><br />
   {{ form.country(size=40) }} {% for error in form.country.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br />
 
-  <label>{{ form.company.label }}</label>
+  <label>{{ form.company.label }}</label><br />
   {{ form.company(size=40) }} {% for error in form.company.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br />
 
-  <label>{{ form.company_id.label }}</label>
+  <label>{{ form.company_id.label }}</label><br />
   {{ form.company_id(size=30) }} {% for error in form.company_id.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br />
 
-  <label>{{ form.vat_id.label }}</label>
+  <label>{{ form.vat_id.label }}</label><br />
   {{ form.vat_id(size=30) }} {% for error in form.vat_id.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br />
 
-  <label>{{ form.note.label }}</label>
+  <label>{{ form.note.label }}</label><br />
   {{ form.note(rows=3, cols=60) }} {% for error in form.note.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br />
 
-  <label>{{ form.date_of_birth.label }}</label>
+  <label>{{ form.date_of_birth.label }}</label><br />
   {{ form.date_of_birth() }} {% for error in form.date_of_birth.errors %}
   <small class="text-danger">{{ error }}</small>
   {% endfor %}<br /><br />
 
-  {{ form.submit() }}
+  {{ form.submit(class="btn-order") }}
 </form>
+
+<hr />
+<p>
+  <a href="{{ url_for('views.moje_objednavky') }}" class="btn-order">
+    📦 Zobrazit moje objednávky
+  </a>
+</p>
 {% endblock %}

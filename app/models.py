@@ -56,16 +56,6 @@ class CartItem(db.Model):
     # DŮLEŽITÉ: doplň relaci
     product = db.relationship('Product', backref='cart_items')
 
-class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    total_price = db.Column(db.Float, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    address = db.Column(db.Text, nullable=True)
-    billing_address = db.Column(db.Text, nullable=True)
-
-    items = db.relationship('OrderItem', backref='order', lazy=True)
 
 class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -73,6 +63,8 @@ class OrderItem(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price_per_item = db.Column(db.Float, nullable=False)
+     # ✅ DŮLEŽITÉ: přidat relaci na Product
+    product = db.relationship('Product', backref='order_items', lazy=True)
 
 class Inquiry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -80,3 +72,21 @@ class Inquiry(db.Model):
     email = db.Column(db.String(128), nullable=False)
     message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Order(db.Model):
+    __tablename__ = 'order'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    total_price = db.Column(db.Float, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    order_number = db.Column(db.String(32), unique=True, nullable=True)  # ✅ správně jen jednou!
+
+    address = db.Column(db.Text, nullable=True)
+    billing_address = db.Column(db.Text, nullable=True)
+
+    items = db.relationship('OrderItem', backref='order', lazy=True)
+
+

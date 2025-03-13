@@ -1,0 +1,20 @@
+{% extends "layout.html" %} {% block title %}Moje objednávky{% endblock %} {%
+block content %}
+<h2>📦 Moje objednávky</h2>
+
+{% if orders %}
+<ul>
+  {% for order in orders %}
+  <li>
+    <strong>Objednávka č. {{ order.order_number }}</strong><br />
+    Datum: {{ order.created_at.strftime('%d.%m.%Y %H:%M') }}<br />
+    Cena: {{ order.total_price }} Kč<br />
+    <a href="{{ url_for('views.detail_objednavky', order_id=order.id) }}"
+      >🔍 Detail</a
+    >
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Nemáte žádné objednávky.</p>
+{% endif %} {% endblock %}

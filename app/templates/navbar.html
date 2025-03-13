@@ -16,11 +16,12 @@
     {% if current_user.is_authenticated %} {% if current_user.role == 'admin' %}
     <a href="{{ url_for('admin.dashboard') }}" class="nav-link">Admin Panel</a>
     {% else %}
-    <!-- Ikona košíku pro běžné uživatele -->
     <a href="{{ url_for('cart.view_cart') }}" class="nav-link cart-icon">
       🛒 <span id="cart-count">{{ cart_item_count }}</span>
     </a>
-    <!-- 🔥 MŮJ PROFIL pro běžné uživatele -->
+    <a href="{{ url_for('views.moje_objednavky') }}" class="nav-link"
+      >🧾 Moje objednávky</a
+    >
     <a href="{{ url_for('views.profile') }}" class="nav-link">👤 Můj profil</a>
     {% endif %}
     <a href="{{ url_for('views.logout') }}" class="nav-link">Odhlásit se</a>

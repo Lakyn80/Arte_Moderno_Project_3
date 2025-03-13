@@ -1,13 +1,21 @@
 # app/views/checkout_routes.py
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
+from datetime import datetime
+import random
 from app.models import CartItem, Product, Order, OrderItem
 from app import db, mail
 from flask_mail import Message
 
 checkout = Blueprint("checkout", __name__, url_prefix="/checkout")
 
+# Funkce pro generování čísla objednávky
+def generate_order_number():
+    date_part = datetime.now().strftime("%Y%m%d")
+    random_part = str(random.randint(1000, 9999))
+    return f"ORD-{date_part}-{random_part}"
 
+# Rekapitulace objednávky
 @checkout.route("/summary", methods=["GET"])
 @login_required
 def checkout_summary():
@@ -19,7 +27,7 @@ def checkout_summary():
     total_price = sum(item.product.price * item.quantity for item in cart_items)
     return render_template("checkout_success.html", cart_items=cart_items, total_price=total_price)
 
-
+# Potvrzení objednávky
 @checkout.route("/confirm", methods=["POST"])
 @login_required
 def confirm_order():
@@ -36,9 +44,14 @@ def confirm_order():
 
     total_price = sum(item.product.price * item.quantity for item in cart_items)
 
-    # Uložení objednávky
-    order = Order(user_id=current_user.id, total_price=total_price,
-                  address=address, billing_address=billing_address)
+    # Uložení objednávky s unikátním číslem
+    order = Order(
+        user_id=current_user.id,
+        total_price=total_price,
+        address=address,
+        billing_address=billing_address,
+        order_number=generate_order_number()
+    )
     db.session.add(order)
     db.session.flush()
 
@@ -51,6 +64,7 @@ def confirm_order():
         )
         db.session.add(order_item)
 
+        # Snížení skladové zásoby
         item.product.stock -= item.quantity
         if item.product.stock <= 0:
             item.product.is_active = False
@@ -58,7 +72,7 @@ def confirm_order():
     db.session.query(CartItem).filter_by(user_id=current_user.id).delete()
     db.session.commit()
 
-    # E-mail firmě
+    # Odeslání potvrzovacího e-mailu
     try:
         admin_msg = Message("📦 Nová objednávka",
                             sender="noreply@artemoderno.cz",
@@ -71,7 +85,6 @@ def confirm_order():
         admin_msg.body = msg_body
         mail.send(admin_msg)
 
-        # E-mail zákazníkovi
         client_msg = Message("✅ Vaše objednávka byla přijata",
                              sender="artemodernoblaha@gmail.com",
                              recipients=[current_user.email])
@@ -81,5 +94,5 @@ def confirm_order():
     except Exception as e:
         print("Chyba při odesílání e-mailu:", e)
 
-    flash("Objednávka byla úspěšně odeslána!", "success")
+    flash(f"Objednávka byla úspěšně odeslána! Číslo objednávky: {order.order_number}", "success")
     return redirect(url_for("views.home"))

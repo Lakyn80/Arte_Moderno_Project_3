@@ -6,7 +6,7 @@ from datetime import datetime
 from app import db, bcrypt, mail
 from app.models import User, Product, Inquiry, CartItem
 from app.forms.forms import ProfileForm
-
+from app.models import Order
 
 
 # Blueprints
@@ -204,3 +204,27 @@ def view_cart():
     ]
 
     return jsonify(cart_data), 200
+
+# ---------- Order number----------
+from datetime import datetime
+import random
+
+def generate_order_number():
+    date_part = datetime.now().strftime("%Y%m%d")
+    random_part = str(random.randint(1000, 9999))
+    return f"OBJ-{date_part}-{random_part}"
+
+@views.route("/moje-objednavky")
+@login_required
+def moje_objednavky():
+    orders = current_user.orders  # přes relaci User -> orders
+    return render_template("moje_objednavky.html", orders=orders)
+
+@views.route("/objednavka/<int:order_id>")
+@login_required
+def detail_objednavky(order_id):
+    order = Order.query.filter_by(id=order_id, user_id=current_user.id).first()
+    if not order:
+        flash("Objednávka nebyla nalezena.", "warning")
+        return redirect(url_for("views.moje_objednavky"))
+    return render_template("detail_objednavky.html", order=order)
