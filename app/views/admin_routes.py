@@ -1,20 +1,23 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_required, current_user, login_user
 from werkzeug.utils import secure_filename
 from functools import wraps
 import os
 
-from app import db, bcrypt
+from app import db, bcrypt, mail
 from app.models import Product, OrderItem, CartItem, User
-
-
-
-from app import db
-from app.models import Product, OrderItem, CartItem
-from app.forms.admin_forms import AdminLoginForm
+from itsdangerous import URLSafeTimedSerializer
+from flask_mail import Message
+from app.forms.admin_forms import (
+    AdminLoginForm,
+    AdminChangePasswordForm,
+    AdminResetRequestForm,
+    AdminResetPasswordForm
+)
 
 admin = Blueprint("admin", __name__, url_prefix="/admin")
 
+# 🔐 Dekorátor pro admin přístup
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -24,12 +27,14 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# 📊 Admin dashboard
 @admin.route("/dashboard")
 @admin_required
 def dashboard():
     products = Product.query.all()
     return render_template("admin_dashboard.html", products=products)
 
+# ➕ Přidání produktu
 @admin.route("/add_product", methods=["GET", "POST"])
 @admin_required
 def add_product():
@@ -66,6 +71,7 @@ def add_product():
 
     return render_template("add_product.html", product=None)
 
+# ✏️ Úprava produktu
 @admin.route("/edit_product/<int:product_id>", methods=["GET", "POST"])
 @admin_required
 def edit_product(product_id):
@@ -93,7 +99,7 @@ def edit_product(product_id):
 
     return render_template("add_product.html", product=product)
 
-# ✅ Soft delete (deaktivace)
+# 🟡 Deaktivace (soft delete)
 @admin.route("/delete_product/<int:product_id>", methods=["POST"])
 @admin_required
 def delete_product(product_id):
@@ -103,7 +109,7 @@ def delete_product(product_id):
     flash("Produkt byl deaktivován.", "warning")
     return redirect(url_for("admin.dashboard"))
 
-# ✅ Reaktivace
+# 🔄 Reaktivace produktu
 @admin.route("/reactivate_product/<int:product_id>", methods=["POST"])
 @admin_required
 def reactivate_product(product_id):
@@ -113,27 +119,25 @@ def reactivate_product(product_id):
     flash("Produkt byl opět aktivován.", "success")
     return redirect(url_for("admin.dashboard"))
 
-# ✅ Hard delete (trvalé odstranění včetně vazeb)
+# ❌ Trvalé smazání produktu
 @admin.route("/hard_delete_product/<int:product_id>", methods=["POST"])
 @admin_required
 def hard_delete_product(product_id):
     product = Product.query.get_or_404(product_id)
-
     CartItem.query.filter_by(product_id=product.id).delete()
     OrderItem.query.filter_by(product_id=product.id).delete()
-
     db.session.delete(product)
     db.session.commit()
     flash("Produkt byl trvale smazán včetně všech vazeb.", "danger")
     return redirect(url_for("admin.dashboard"))
 
+# 🔑 Přihlášení admina
 @admin.route("/login", methods=["GET", "POST"])
 def admin_login():
     if current_user.is_authenticated and current_user.role == 'admin':
         return redirect(url_for("admin.dashboard"))
 
     form = AdminLoginForm()
-
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.role == 'admin' and bcrypt.check_password_hash(user.password, form.password.data):
@@ -142,11 +146,9 @@ def admin_login():
             return redirect(url_for("admin.dashboard"))
         else:
             flash("Neplatné přihlašovací údaje nebo nejste administrátor.", "danger")
-
     return render_template("admin_login.html", form=form)
 
-from app.forms.admin_forms import AdminChangePasswordForm
-
+# 🔐 Změna hesla přihlášeným adminem
 @admin.route("/change_password", methods=["GET", "POST"])
 @admin_required
 def admin_change_password():
@@ -160,3 +162,55 @@ def admin_change_password():
             flash("✅ Heslo bylo úspěšně změněno.", "success")
             return redirect(url_for("admin.dashboard"))
     return render_template("admin_change_password.html", form=form)
+
+# 📧 Reset hesla – požadavek na e-mail
+@admin.route("/reset_password", methods=["GET", "POST"])
+def admin_reset_request():
+    form = AdminResetRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.role == 'admin':
+            serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+            token = serializer.dumps(user.email, salt="admin-reset-salt")
+            reset_url = url_for("admin.admin_reset_token", token=token, _external=True)
+
+            msg = Message("Obnovení hesla (ArteModerno)", sender="noreply@artemoderno.cz", recipients=[user.email])
+            msg.body = f"""
+Dobrý den,
+
+pro obnovení hesla klikněte na následující odkaz (platný 30 minut):
+
+{reset_url}
+
+Pokud jste o reset nežádali, ignorujte tento e-mail.
+"""
+            mail.send(msg)
+            flash("Resetovací odkaz byl odeslán na e-mail.", "info")
+            return redirect(url_for("admin.admin_login"))
+        else:
+            flash("Uživatel s tímto e-mailem neexistuje nebo není administrátor.", "danger")
+    return render_template("admin_reset_request.html", form=form)
+
+# 🔓 Reset hesla – zadání nového hesla
+@admin.route("/reset_password/<token>", methods=["GET", "POST"])
+def admin_reset_token(token):
+    serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+    try:
+        email = serializer.loads(token, salt="admin-reset-salt", max_age=1800)
+    except Exception:
+        flash("Odkaz je neplatný nebo vypršel.", "danger")
+        return redirect(url_for("admin.admin_reset_request"))
+
+    user = User.query.filter_by(email=email, role='admin').first()
+    if not user:
+        flash("Uživatel nebyl nalezen.", "danger")
+        return redirect(url_for("admin.admin_reset_request"))
+
+    form = AdminResetPasswordForm()
+    if form.validate_on_submit():
+        user.password = bcrypt.generate_password_hash(form.new_password.data).decode("utf-8")
+        db.session.commit()
+        flash("Heslo bylo úspěšně změněno.", "success")
+        return redirect(url_for("admin.admin_login"))
+
+    return render_template("admin_reset_password.html", form=form)

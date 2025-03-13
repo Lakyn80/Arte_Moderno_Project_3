@@ -6,41 +6,54 @@ content %}
   {{ form.hidden_tag() }}
 
   <div class="form-group">
-    {{ form.email.label }} {{ form.email(class="form-control") }}
+    {{ form.email.label }}<br />
+    {{ form.email(size=32, class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.password.label }} {{ form.password(class="form-control") }}
+    {{ form.password.label }}<br />
+    {{ form.password(size=32, class_="form-control") }}
   </div>
 
-  {{ form.submit(class="btn btn-primary") }}
+  <button type="submit">{{ form.submit.label.text }}</button>
 </form>
+
+<!-- ✅ ODKAZ NA RESET HESLA -->
+<div style="text-align: center; margin-top: 15px">
+  <a href="{{ url_for('admin.admin_reset_request') }}"
+    >🔒 Zapomněli jste heslo?</a
+  >
+</div>
 
 <style>
   form {
     max-width: 400px;
     margin: 30px auto;
     padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
     background: #f9f9f9;
+    border-radius: 10px;
+    border: 1px solid #ccc;
   }
   .form-group {
     margin-bottom: 15px;
   }
-  label {
-    font-weight: bold;
-  }
-  .form-control {
-    width: 100%;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-  .btn {
-    padding: 10px 20px;
+  button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
     border-radius: 6px;
     cursor: pointer;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
   }
 </style>
 {% endblock %}

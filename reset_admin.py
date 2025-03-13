@@ -13,8 +13,8 @@ with app.app_context():
     if admin:
         # Nové údaje — můžeš změnit podle potřeby
         new_username = "admin"
-        new_email = "admin@admin.com"
-        new_password = "supersecurepassword123"
+        new_email = "lukas.krumpach@gmail.com"
+        new_password = "admin2025"
 
         # Změna dat
         admin.username = new_username
