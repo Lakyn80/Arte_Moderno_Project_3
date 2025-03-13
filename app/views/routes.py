@@ -8,7 +8,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from app.models import Product
 from app.models import Inquiry, User, Product, CartItem
 from flask import session
-
+from datetime import datetime
 
 views = Blueprint("views", __name__)
 cart = Blueprint("cart", __name__, url_prefix="/cart")
@@ -25,10 +25,6 @@ def galerie():
         print(f"ID: {product.id}, Název: {product.name}, Popis: {product.description}, Cena: {product.price}, Sklad: {product.stock}")
 
     return render_template("galerie.html", products=products)
-
-
-
-
 
 
 @views.route('/kontakt', methods=['GET', 'POST'])
@@ -114,9 +110,7 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if user and bcrypt.check_password_hash(user.password, password):
-            if user.role == 'admin':
-                flash("Přístup do admin panelu je oddělený. Použijte admin přihlášení.", "error")
-                return redirect(url_for("views.login"))
+           
 
             login_user(user)
             flash("Přihlášení úspěšné!", "success")
@@ -193,3 +187,34 @@ def view_cart():
     ]
 
     return jsonify(cart_data), 200
+
+@views.route("/profil", methods=["GET", "POST"])
+@login_required
+def profil():
+    if request.method == "POST":
+        current_user.first_name = request.form.get("first_name")
+        current_user.last_name = request.form.get("last_name")
+        current_user.phone = request.form.get("phone")
+        current_user.address = request.form.get("address")
+        current_user.billing_address = request.form.get("billing_address")
+        current_user.city = request.form.get("city")
+        current_user.postal_code = request.form.get("postal_code")
+        current_user.country = request.form.get("country")
+        current_user.company = request.form.get("company")
+        current_user.ico = request.form.get("ico")
+        current_user.dic = request.form.get("dic")
+        current_user.note = request.form.get("note")
+
+        birth_date_str = request.form.get("birth_date")
+        if birth_date_str:
+            try:
+                current_user.birth_date = datetime.strptime(birth_date_str, "%Y-%m-%d")
+            except ValueError:
+                flash("Neplatný formát data narození (očekáváno RRRR-MM-DD)", "danger")
+
+        db.session.commit()
+        flash("Profil byl aktualizován.", "success")
+        return redirect(url_for("views.profil"))
+
+    return render_template("profil.html", user=current_user)
+

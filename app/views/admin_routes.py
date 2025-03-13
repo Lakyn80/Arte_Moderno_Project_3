@@ -1,11 +1,17 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, login_user
 from werkzeug.utils import secure_filename
 from functools import wraps
 import os
 
+from app import db, bcrypt
+from app.models import Product, OrderItem, CartItem, User
+
+
+
 from app import db
 from app.models import Product, OrderItem, CartItem
+from app.forms.admin_forms import AdminLoginForm
 
 admin = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -120,3 +126,22 @@ def hard_delete_product(product_id):
     db.session.commit()
     flash("Produkt byl trvale smazán včetně všech vazeb.", "danger")
     return redirect(url_for("admin.dashboard"))
+
+@admin.route("/login", methods=["GET", "POST"])
+def admin_login():
+    if current_user.is_authenticated and current_user.role == 'admin':
+        return redirect(url_for("admin.dashboard"))
+
+    form = AdminLoginForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.role == 'admin' and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user)
+            flash("Přihlášení jako administrátor bylo úspěšné.", "success")
+            return redirect(url_for("admin.dashboard"))
+        else:
+            flash("Neplatné přihlašovací údaje nebo nejste administrátor.", "danger")
+
+    return render_template("admin_login.html", form=form)
+

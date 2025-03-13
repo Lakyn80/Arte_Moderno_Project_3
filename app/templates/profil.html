@@ -1,0 +1,63 @@
+{% extends "layout.html" %} {% block title %}Můj profil{% endblock %} {% block
+content %}
+<h2>🧍 Můj profil</h2>
+<form method="POST">
+  <label>Jméno:</label>
+  <input
+    type="text"
+    name="first_name"
+    value="{{ user.first_name or '' }}"
+  /><br />
+
+  <label>Příjmení:</label>
+  <input
+    type="text"
+    name="last_name"
+    value="{{ user.last_name or '' }}"
+  /><br />
+
+  <label>Telefon:</label>
+  <input type="text" name="phone" value="{{ user.phone or '' }}" /><br />
+
+  <label>Adresa:</label>
+  <textarea name="address">{{ user.address or '' }}</textarea><br />
+
+  <label>Fakturační adresa:</label>
+  <textarea name="billing_address">{{ user.billing_address or '' }}</textarea
+  ><br />
+
+  <label>Město:</label>
+  <input type="text" name="city" value="{{ user.city or '' }}" /><br />
+
+  <label>PSČ:</label>
+  <input
+    type="text"
+    name="postal_code"
+    value="{{ user.postal_code or '' }}"
+  /><br />
+
+  <label>Země:</label>
+  <input type="text" name="country" value="{{ user.country or '' }}" /><br />
+
+  <label>Firma:</label>
+  <input type="text" name="company" value="{{ user.company or '' }}" /><br />
+
+  <label>IČO:</label>
+  <input type="text" name="ico" value="{{ user.ico or '' }}" /><br />
+
+  <label>DIČ:</label>
+  <input type="text" name="dic" value="{{ user.dic or '' }}" /><br />
+
+  <label>Poznámka:</label>
+  <textarea name="note">{{ user.note or '' }}</textarea><br />
+
+  <label>Datum narození:</label>
+  <input
+    type="date"
+    name="birth_date"
+    value="{{ user.birth_date.strftime('%Y-%m-%d') if user.birth_date else '' }}"
+  /><br /><br />
+
+  <button type="submit">💾 Uložit změny</button>
+</form>
+{% endblock %}

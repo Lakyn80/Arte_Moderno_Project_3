@@ -1,0 +1,46 @@
+{% extends "layout.html" %} {% block title %}Admin Login{% endblock %} {% block
+content %}
+<h2>Přihlášení administrátora</h2>
+
+<form method="POST" action="{{ url_for('admin.admin_login') }}">
+  {{ form.hidden_tag() }}
+
+  <div class="form-group">
+    {{ form.email.label }} {{ form.email(class="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ form.password.label }} {{ form.password(class="form-control") }}
+  </div>
+
+  {{ form.submit(class="btn btn-primary") }}
+</form>
+
+<style>
+  form {
+    max-width: 400px;
+    margin: 30px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: #f9f9f9;
+  }
+  .form-group {
+    margin-bottom: 15px;
+  }
+  label {
+    font-weight: bold;
+  }
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  .btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
