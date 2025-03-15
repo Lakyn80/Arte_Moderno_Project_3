@@ -7,7 +7,8 @@ from app import db, bcrypt, mail
 from app.models import User, Product, Inquiry, CartItem
 from app.forms.forms import ProfileForm
 from app.models import Order
-
+from flask import send_file
+from app.pdf_generator import generate_invoice_pdf
 
 # Blueprints
 views = Blueprint("views", __name__)
@@ -205,14 +206,7 @@ def view_cart():
 
     return jsonify(cart_data), 200
 
-# ---------- Order number----------
-from datetime import datetime
-import random
 
-def generate_order_number():
-    date_part = datetime.now().strftime("%Y%m%d")
-    random_part = str(random.randint(1000, 9999))
-    return f"OBJ-{date_part}-{random_part}"
 
 @views.route("/moje-objednavky")
 @login_required
@@ -228,3 +222,22 @@ def detail_objednavky(order_id):
         flash("Objednávka nebyla nalezena.", "warning")
         return redirect(url_for("views.moje_objednavky"))
     return render_template("detail_objednavky.html", order=order)
+
+from flask import send_file
+
+@views.route("/objednavka/<int:order_id>/faktura")
+@login_required
+def stahnout_fakturu(order_id):
+    order = Order.query.filter_by(id=order_id, user_id=current_user.id).first()
+    if not order:
+        flash("Objednávka nebyla nalezena.", "warning")
+        return redirect(url_for("views.moje_objednavky"))
+
+    pdf_buffer = generate_invoice_pdf(order)
+    return send_file(
+        pdf_buffer,
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=f"faktura_{order.order_number}.pdf"
+    )
+

@@ -38,6 +38,12 @@ block content %}
 <p>{{ order.billing_address or '-' }}</p>
 
 <hr />
+<a
+  href="{{ url_for('views.stahnout_fakturu', order_id=order.id) }}"
+  class="btn-order"
+  >⬇ Stáhnout fakturu (PDF)</a
+>
+
 <p>
   <a href="{{ url_for('views.moje_objednavky') }}" class="btn-order"
     >← Zpět na moje objednávky</a
