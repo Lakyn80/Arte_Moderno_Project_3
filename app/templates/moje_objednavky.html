@@ -1,14 +1,23 @@
 {% extends "layout.html" %} {% block title %}Moje objednávky{% endblock %} {%
 block content %}
+
 <h2>📦 Moje objednávky</h2>
 
-{% if orders %}
+{% if order_data %}
 <ul>
-  {% for order in orders %}
+  {% for order, local_time in order_data %}
   <li>
-    <strong>Objednávka č. {{ order.order_number }}</strong><br />
-    Datum: {{ order.created_at.strftime('%d.%m.%Y %H:%M') }}<br />
+    <strong>Objednávka č. {{ order.invoice_number }}</strong><br />
+    Datum: {{ local_time.strftime('%d.%m.%Y %H:%M') }}<br />
     Cena: {{ order.total_price }} Kč<br />
+    <a href="{{ url_for('views.stahnout_fakturu', order_id=order.id) }}"
+      >📄 Stáhnout fakturu</a
+    >
+    |
+    <a href="{{ url_for('views.poslat_fakturu_emailem', order_id=order.id) }}"
+      >✉️ Zaslat e-mailem</a
+    >
+    |
     <a href="{{ url_for('views.detail_objednavky', order_id=order.id) }}"
       >🔍 Detail</a
     >

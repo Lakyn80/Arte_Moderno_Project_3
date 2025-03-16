@@ -1,10 +1,13 @@
-{% extends "layout.html" %} {% block title %}Detail objednávky{% endblock %} {%
-block content %}
-<h2>🧾 Detail objednávky č. {{ order.order_number }}</h2>
+{% extends "layout.html" %}
+{% block title %}Detail objednávky{% endblock %}
+{% block content %}
+
+<h2>🧾 Detail objednávky {{ order.invoice_number }}</h2>
+
+<h3>Faktura č. {{ order.invoice_number }}</h3>
 
 <p>
-  <strong>Datum vytvoření:</strong> {{ order.created_at.strftime('%d.%m.%Y
-  %H:%M') }}
+  📅 Datum: {{ local_time.strftime('%d.%m.%Y %H:%M') }}
 </p>
 
 <h3>📦 Produkty:</h3>
@@ -41,14 +44,16 @@ block content %}
 <a
   href="{{ url_for('views.stahnout_fakturu', order_id=order.id) }}"
   class="btn-order"
-  >⬇ Stáhnout fakturu (PDF)</a
->
+>⬇ Stáhnout fakturu (PDF)</a>
+
+<a
+  href="{{ url_for('views.poslat_fakturu_emailem', order_id=order.id) }}"
+  class="btn-order"
+>📧 Poslat fakturu e-mailem</a>
 
 <p>
   <a href="{{ url_for('views.moje_objednavky') }}" class="btn-order"
-    >← Zpět na moje objednávky</a
-  >
-  <!-- PDF faktura později sem -->
+  >← Zpět na moje objednávky</a>
 </p>
 
 <style>
@@ -76,10 +81,13 @@ block content %}
     color: white;
     text-decoration: none;
     border-radius: 6px;
+    margin-right: 10px;
+    margin-top: 10px;
   }
 
   .btn-order:hover {
     background-color: #0056b3;
   }
 </style>
+
 {% endblock %}

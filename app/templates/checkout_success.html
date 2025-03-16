@@ -4,6 +4,13 @@
 
 <form method="POST" action="{{ url_for('checkout.confirm_order') }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <input type="hidden" id="timezone" name="timezone" />
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      document.getElementById("timezone").value = tz;
+    });
+  </script>
 
   <h3>🛒 Vaše produkty:</h3>
   <ul>
@@ -17,6 +24,11 @@
   </ul>
 
   <h3>💰 Celková cena: <strong>{{ total_price }} Kč</strong></h3>
+  <p>
+    <strong
+      >Číslo objednávky bude vygenerováno při potvrzení objednávky.</strong
+    >
+  </p>
 
   <hr />
   <h3>📦 Doručovací údaje:</h3>

@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask_login import UserMixin
-from app import db
 from flask import url_for
+from app import db
 
 
 class User(db.Model, UserMixin):
@@ -11,9 +11,12 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(20), default='user')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    is_admin = db.Column(db.Boolean, default=False)  # ✅ přidáno
+    is_admin = db.Column(db.Boolean, default=False)
+    first_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
 
-    # ✅ PROFIL – volitelné údaje
+
+    # PROFIL – volitelné údaje
     first_name = db.Column(db.String(64), nullable=True)
     last_name = db.Column(db.String(64), nullable=True)
     phone = db.Column(db.String(32), nullable=True)
@@ -28,9 +31,10 @@ class User(db.Model, UserMixin):
     note = db.Column(db.Text, nullable=True)
     date_of_birth = db.Column(db.Date, nullable=True)
 
-    # ✅ VAZBY
+    # RELACE
     cart_items = db.relationship('CartItem', backref='user', lazy=True)
-    orders = db.relationship('Order', backref='user', lazy=True)
+    orders = db.relationship('Order', back_populates='user', lazy=True)
+
 
 class Product(db.Model):
     __tablename__ = 'product'
@@ -41,11 +45,13 @@ class Product(db.Model):
     image_filename = db.Column(db.String(256), nullable=True)
     stock = db.Column(db.Integer, nullable=True)
     is_active = db.Column(db.Boolean, default=True)
+    position_id = db.Column(db.Integer, nullable=True)
+
 
     def get_image_url(self):
         if self.image_filename:
             return url_for('static', filename='uploads/' + self.image_filename)
-        return url_for('static', filename='images/default_product.jpg')  # fallback obrázek
+        return url_for('static', filename='images/default_product.jpg')
 
 
 class CartItem(db.Model):
@@ -53,7 +59,7 @@ class CartItem(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False, default=1)
-    # DŮLEŽITÉ: doplň relaci
+
     product = db.relationship('Product', backref='cart_items')
 
 
@@ -63,8 +69,10 @@ class OrderItem(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price_per_item = db.Column(db.Float, nullable=False)
-     # ✅ DŮLEŽITÉ: přidat relaci na Product
+
     product = db.relationship('Product', backref='order_items', lazy=True)
+    order = db.relationship('Order', back_populates='items')
+
 
 class Inquiry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -73,20 +81,17 @@ class Inquiry(db.Model):
     message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-class Order(db.Model):
-    __tablename__ = 'order'
-    __table_args__ = {'extend_existing': True}
 
+class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    order_number = db.Column(db.String(32), unique=True, nullable=True)  # ✅ správně jen jednou!
-
+    status = db.Column(db.String(50), default='new')
+    invoice_number = db.Column(db.String(32), unique=True, nullable=True)
+    timezone = db.Column(db.String(64), nullable=True)
     address = db.Column(db.Text, nullable=True)
     billing_address = db.Column(db.Text, nullable=True)
 
-    items = db.relationship('OrderItem', backref='order', lazy=True)
-
-
+    user = db.relationship("User", back_populates="orders")
+    items = db.relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")

@@ -1,32 +1,27 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session, send_file
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 from datetime import datetime
-
+from pytz import timezone, UTC
 from app import db, bcrypt, mail
-from app.models import User, Product, Inquiry, CartItem
+from app.models import User, Product, Inquiry, CartItem, Order
 from app.forms.forms import ProfileForm
-from app.models import Order
-from flask import send_file
 from app.pdf_generator import generate_invoice_pdf
 
 # Blueprints
 views = Blueprint("views", __name__)
 cart = Blueprint("cart", __name__, url_prefix="/cart")
 
-
 # ---------- DOMOVSKÁ STRÁNKA ----------
 @views.route("/", methods=["GET"])
 def home():
     return render_template("home.html")
-
 
 # ---------- GALERIE ----------
 @views.route("/galerie")
 def galerie():
     products = Product.query.filter(Product.is_active == True, Product.stock > 0).all()
     return render_template("galerie.html", products=products)
-
 
 # ---------- KONTAKTNÍ FORMULÁŘ ----------
 @views.route('/kontakt', methods=['GET', 'POST'])
@@ -59,13 +54,11 @@ def kontakt():
 
     return render_template('kontakt.html')
 
-
-# ---------- VÝPIS DOTAZŮ (např. pro admina) ----------
+# ---------- VÝPIS DOTAZŮ ----------
 @views.route("/inquiries")
 def list_inquiries():
     inquiries = Inquiry.query.all()
     return render_template("list_inquiries.html", inquiries=inquiries)
-
 
 # ---------- REGISTRACE ----------
 @views.route("/register", methods=["GET", "POST"])
@@ -101,7 +94,6 @@ def register():
 
     return render_template("register.html")
 
-
 # ---------- PŘIHLÁŠENÍ ----------
 @views.route("/login", methods=["GET", "POST"])
 def login():
@@ -124,7 +116,6 @@ def login():
 
     return render_template("login.html")
 
-
 # ---------- ODHLÁŠENÍ ----------
 @views.route("/logout")
 @login_required
@@ -133,8 +124,7 @@ def logout():
     flash("Byl jste úspěšně odhlášen.", "info")
     return redirect(url_for("views.home"))
 
-
-# ---------- MŮJ PROFIL (WTForms) ----------
+# ---------- PROFIL ----------
 @views.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
@@ -146,8 +136,7 @@ def profile():
         return redirect(url_for('views.profile'))
     return render_template('profile.html', form=form)
 
-
-# ---------- KOŠÍK – PŘIDAT PRODUKT ----------
+# ---------- KOŠÍK ----------
 @cart.route("/add", methods=["POST"])
 @login_required
 def add_to_cart():
@@ -159,7 +148,6 @@ def add_to_cart():
         return jsonify({"error": "Produkt nenalezen"}), 404
 
     cart_item = CartItem.query.filter_by(user_id=current_user.id, product_id=product_id).first()
-
     if cart_item:
         cart_item.quantity += 1
     else:
@@ -169,8 +157,6 @@ def add_to_cart():
     db.session.commit()
     return jsonify({"message": "Produkt přidán do košíku"}), 200
 
-
-# ---------- KOŠÍK – ODEBRAT PRODUKT ----------
 @cart.route("/remove", methods=["POST"])
 @login_required
 def remove_from_cart():
@@ -185,13 +171,10 @@ def remove_from_cart():
     db.session.commit()
     return jsonify({"message": "Produkt odebrán z košíku"}), 200
 
-
-# ---------- KOŠÍK – ZOBRAZIT OBSAH ----------
 @cart.route("/view", methods=["GET"])
 @login_required
 def view_cart():
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
-
     cart_data = [
         {
             "id": item.id,
@@ -203,16 +186,19 @@ def view_cart():
         }
         for item in cart_items
     ]
-
     return jsonify(cart_data), 200
 
-
-
+# ---------- MOJE OBJEDNÁVKY ----------
 @views.route("/moje-objednavky")
 @login_required
 def moje_objednavky():
-    orders = current_user.orders  # přes relaci User -> orders
-    return render_template("moje_objednavky.html", orders=orders)
+    orders = current_user.orders
+    order_data = []
+    for order in orders:
+        client_tz = timezone(order.timezone or 'UTC')
+        local_time = order.created_at.replace(tzinfo=UTC).astimezone(client_tz)
+        order_data.append((order, local_time))
+    return render_template("moje_objednavky.html", order_data=order_data)
 
 @views.route("/objednavka/<int:order_id>")
 @login_required
@@ -221,10 +207,12 @@ def detail_objednavky(order_id):
     if not order:
         flash("Objednávka nebyla nalezena.", "warning")
         return redirect(url_for("views.moje_objednavky"))
-    return render_template("detail_objednavky.html", order=order)
 
-from flask import send_file
+    client_tz = timezone(order.timezone or 'UTC')
+    local_time = order.created_at.replace(tzinfo=UTC).astimezone(client_tz)
+    return render_template("detail_objednavky.html", order=order, local_time=local_time)
 
+# ---------- FAKTURA PDF ----------
 @views.route("/objednavka/<int:order_id>/faktura")
 @login_required
 def stahnout_fakturu(order_id):
@@ -234,10 +222,24 @@ def stahnout_fakturu(order_id):
         return redirect(url_for("views.moje_objednavky"))
 
     pdf_buffer = generate_invoice_pdf(order)
-    return send_file(
-        pdf_buffer,
-        mimetype="application/pdf",
-        as_attachment=True,
-        download_name=f"faktura_{order.order_number}.pdf"
-    )
+    return send_file(pdf_buffer, mimetype="application/pdf", as_attachment=True,
+                     download_name=f"faktura_{order.invoice_number}.pdf")
 
+# ---------- POSLAT FAKTURU EMAILEM ----------
+@views.route("/objednavka/<int:order_id>/faktura/email")
+@login_required
+def poslat_fakturu_emailem(order_id):
+    order = Order.query.filter_by(id=order_id, user_id=current_user.id).first()
+    if not order:
+        flash("Objednávka nebyla nalezena.", "warning")
+        return redirect(url_for("views.moje_objednavky"))
+
+    pdf_buffer = generate_invoice_pdf(order)
+    msg = Message(subject=f"📎 Faktura č. {order.invoice_number}",
+                  sender="info@tvujeshop.cz",
+                  recipients=[current_user.email],
+                  body=f"Dobrý den,\npřikládáme fakturu k vaší objednávce č. {order.invoice_number}.\nDěkujeme za nákup.")
+    msg.attach(f"faktura_{order.invoice_number}.pdf", "application/pdf", pdf_buffer.read())
+    mail.send(msg)
+    flash("Faktura byla odeslána na váš e-mail.", "success")
+    return redirect(url_for("views.moje_objednavky"))

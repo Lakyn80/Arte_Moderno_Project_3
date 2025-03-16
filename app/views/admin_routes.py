@@ -214,3 +214,50 @@ def admin_reset_token(token):
         return redirect(url_for("admin.admin_login"))
 
     return render_template("admin_reset_password.html", form=form)
+
+import csv
+from io import StringIO
+from flask import make_response
+from app.models import Order
+
+@admin.route("/export_orders_csv")
+@admin_required
+def export_orders_csv():
+    orders = Order.query.all()
+
+    si = StringIO()
+    writer = csv.writer(si)
+
+    # Hlavička CSV
+    writer.writerow([
+        "Číslo faktury",
+        "Jméno",
+        "Příjmení",
+        "E-mail",
+        "Celková cena (Kč)",
+        "Datum vytvoření",
+        "Stav",
+        "Doručovací adresa",
+        "Fakturační adresa"
+    ])
+
+    for order in orders:
+        user = order.user
+        writer.writerow([
+            order.invoice_number or "",
+            user.first_name or "",
+            user.last_name or "",
+            user.email or "",
+            f"{order.total_price:.2f}",
+            order.created_at.strftime("%d.%m.%Y %H:%M"),
+            order.status,
+            order.address or "",
+            order.billing_address or ""
+        ])
+
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=export_objednavek.csv"
+    output.headers["Content-type"] = "text/csv; charset=utf-8"
+    return output
+
+

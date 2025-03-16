@@ -10,6 +10,11 @@ content %}
 <a href="{{ url_for('admin.add_product') }}" class="btn-add-product"
   >➕ Přidat nový produkt</a
 >
+<a
+  href="{{ url_for('admin.export_orders_csv') }}"
+  class="btn btn-sm btn-primary"
+  >📤 Export objednávek CSV</a
+>
 
 <!-- Tabulka produktů -->
 <table class="admin-table">
