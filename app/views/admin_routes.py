@@ -3,6 +3,12 @@ from flask_login import login_required, current_user, login_user
 from werkzeug.utils import secure_filename
 from functools import wraps
 import os
+import csv
+from io import StringIO
+from flask import make_response
+from app.models import Order
+from sqlalchemy.orm import joinedload
+from app.forms.admin_forms import AdminUpdateOrderStatusForm
 
 from app import db, bcrypt, mail
 from app.models import Product, OrderItem, CartItem, User
@@ -215,10 +221,7 @@ def admin_reset_token(token):
 
     return render_template("admin_reset_password.html", form=form)
 
-import csv
-from io import StringIO
-from flask import make_response
-from app.models import Order
+
 
 @admin.route("/export_orders_csv")
 @admin_required
@@ -261,3 +264,55 @@ def export_orders_csv():
     return output
 
 
+
+
+@admin.route("/orders", methods=["GET"])
+@admin_required
+def admin_orders():
+    user_email = request.args.get("email")
+    date_from = request.args.get("from")
+    date_to = request.args.get("to")
+
+    orders = Order.query.options(
+        joinedload(Order.user),
+        joinedload(Order.items).joinedload(OrderItem.product)
+    )
+
+    if user_email:
+        orders = orders.join(User).filter(User.email.ilike(f"%{user_email}%"))
+    
+    if date_from:
+        orders = orders.filter(Order.created_at >= date_from)
+    if date_to:
+        orders = orders.filter(Order.created_at <= date_to)
+
+    orders = orders.order_by(Order.created_at.desc()).all()
+    return render_template("admin_orders.html", orders=orders)
+
+# 📄 Detail objednávky
+
+@admin.route("/order/<int:order_id>", methods=["GET", "POST"])
+@admin_required
+def order_detail(order_id):
+    order = Order.query.get_or_404(order_id)
+    form = AdminUpdateOrderStatusForm()
+
+    if form.validate_on_submit():
+        order.status = form.status.data
+        db.session.commit()
+        flash("Stav objednávky byl úspěšně změněn.", "success")
+        return redirect(url_for("admin.order_detail", order_id=order.id))
+
+    form.status.data = order.status  # předvyplnit aktuální stav
+    return render_template("admin_order_detail.html", order=order, form=form)
+
+
+@admin.route("/order/<int:order_id>/update_status", methods=["POST"])
+@admin_required
+def update_order_status(order_id):
+    order = Order.query.get_or_404(order_id)
+    new_status = request.form.get("status")
+    order.status = new_status
+    db.session.commit()
+    flash("Stav objednávky byl aktualizován.", "success")
+    return redirect(url_for("admin.order_detail", order_id=order.id))
