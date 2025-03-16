@@ -2,7 +2,8 @@ login_html = """ {% extends "layout.html" %} {% block title %}Přihlášení{%
 endblock %} {% block content %}
 <h1>Přihlášení</h1>
 <form method="POST" action="{{ url_for('views.login') }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> <!-- CSRF token -->
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <!-- CSRF token -->
 
   <label for="email">E-mail:</label>
   <input type="email" name="email" id="email" required /><br /><br />
@@ -10,10 +11,17 @@ endblock %} {% block content %}
   <label for="password">Heslo:</label>
   <input type="password" name="password" id="password" required /><br /><br />
 
-  <button type="submit">Přihlásit</button>
+  <button type="submit">Přihlásit</button> <br /><br />
+  <p style="text-align: center">
+    <a href="{{ url_for('views.client_reset_request') }}"
+      >Zapomněli jste heslo?</a
+    >
+  </p>
+
+  <p>
+    Nemáte ještě účet?
+    <a href="{{ url_for('views.register') }}">Zaregistrujte se</a>.
+  </p>
 </form>
-<p>
-  Nemáte ještě účet?
-  <a href="{{ url_for('views.register') }}">Zaregistrujte se</a>.
-</form>
+
 {% endblock %}

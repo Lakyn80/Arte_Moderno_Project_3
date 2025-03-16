@@ -7,6 +7,9 @@ from app import db, bcrypt, mail
 from app.models import User, Product, Inquiry, CartItem, Order
 from app.forms.forms import ProfileForm
 from app.pdf_generator import generate_invoice_pdf
+from app.forms.forms import ClientResetRequestForm, ClientResetPasswordForm
+from itsdangerous import URLSafeTimedSerializer
+from flask import current_app
 
 # Blueprints
 views = Blueprint("views", __name__)
@@ -123,6 +126,61 @@ def logout():
     logout_user()
     flash("Byl jste úspěšně odhlášen.", "info")
     return redirect(url_for("views.home"))
+
+
+# 📧 Klient žádá reset hesla
+@views.route("/reset_password", methods=["GET", "POST"])
+def client_reset_request():
+    form = ClientResetRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data, role='user').first()
+        if user:
+            serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+            token = serializer.dumps(user.email, salt="user-reset-salt")
+            reset_url = url_for("views.client_reset_token", token=token, _external=True)
+
+            msg = Message("Obnova hesla – ArteModerno",
+                          sender="noreply@artemoderno.cz",
+                          recipients=[user.email])
+            msg.body = f"""Dobrý den,
+
+pro změnu hesla klikněte na tento odkaz (platí 30 minut):
+{reset_url}
+
+Pokud jste žádost neodesílali, ignorujte tento e-mail.
+"""
+            mail.send(msg)
+            flash("Odkaz na obnovu hesla byl odeslán na váš e-mail.", "info")
+            return redirect(url_for("views.login"))
+        else:
+            flash("Uživatel s tímto e-mailem nebyl nalezen.", "warning")
+    return render_template("client_reset_request.html", form=form)
+
+
+# 🔓 Změna hesla po kliknutí na odkaz
+@views.route("/reset_password/<token>", methods=["GET", "POST"])
+def client_reset_token(token):
+    serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+    try:
+        email = serializer.loads(token, salt="user-reset-salt", max_age=1800)
+    except Exception:
+        flash("Odkaz je neplatný nebo vypršel.", "danger")
+        return redirect(url_for("views.client_reset_request"))
+
+    user = User.query.filter_by(email=email, role='user').first()
+    if not user:
+        flash("Uživatel nebyl nalezen.", "danger")
+        return redirect(url_for("views.client_reset_request"))
+
+    form = ClientResetPasswordForm()
+    if form.validate_on_submit():
+        user.password = bcrypt.generate_password_hash(form.new_password.data).decode("utf-8")
+        db.session.commit()
+        flash("Heslo bylo úspěšně změněno. Nyní se můžete přihlásit.", "success")
+        return redirect(url_for("views.login"))
+
+    return render_template("client_reset_password.html", form=form)
+
 
 # ---------- PROFIL ----------
 @views.route('/profile', methods=['GET', 'POST'])

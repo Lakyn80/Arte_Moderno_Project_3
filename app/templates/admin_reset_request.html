@@ -1,17 +1,21 @@
-{% extends "layout.html" %} {% block title %}Reset hesla - Admin{% endblock %}
+{% extends "layout.html" %} {% block title %}Obnova hesla - Admin{% endblock %}
 {% block content %}
 <h2>Obnova administrátorského hesla</h2>
 
 <form method="POST" action="{{ url_for('admin.admin_reset_request') }}">
   {{ form.hidden_tag() }}
-
   <div class="form-group">
     {{ form.email.label }} {{ form.email(class_="form-control",
     placeholder="Zadejte svůj e-mail") }}
   </div>
-
-  <div class="form-group">{{ form.submit(class_="btn-reset") }}</div>
+  <div class="form-group">
+    {{ form.submit(class_="btn-reset", value="Odeslat resetovací e-mail") }}
+  </div>
 </form>
+
+<p style="text-align: center; margin-top: 20px">
+  <a href="{{ url_for('admin.admin_login') }}">← Zpět na přihlášení</a>
+</p>
 
 <style>
   h2 {
