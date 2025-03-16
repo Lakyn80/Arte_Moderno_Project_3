@@ -92,6 +92,7 @@ class Order(db.Model):
     timezone = db.Column(db.String(64), nullable=True)
     address = db.Column(db.Text, nullable=True)
     billing_address = db.Column(db.Text, nullable=True)
+    note = db.Column(db.Text)  # ✅ přidaný sloupec
 
     user = db.relationship("User", back_populates="orders")
     items = db.relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")

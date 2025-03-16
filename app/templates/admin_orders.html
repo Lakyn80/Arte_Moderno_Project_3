@@ -41,6 +41,7 @@ content %}
   <table class="admin-table display" id="orders-table">
     <thead>
       <tr>
+        <th>Číslo faktury</th>
         <th>Číslo objednávky</th>
         <th>Zákazník</th>
         <th>Email</th>
@@ -48,10 +49,12 @@ content %}
         <th>Celková cena</th>
         <th>Datum</th>
         <th>Stav</th>
+        <th>Poznámka</th>
       </tr>
     </thead>
     <tfoot>
       <tr>
+        <th>Číslo faktury</th>
         <th>Číslo objednávky</th>
         <th>Zákazník</th>
         <th>Email</th>
@@ -59,15 +62,17 @@ content %}
         <th>Celková cena</th>
         <th>Datum</th>
         <th>Stav</th>
+        <th>Poznámka</th>
       </tr>
     </tfoot>
     <tbody>
       {% for order in orders %}
       <tr>
+        <td>{{ order.invoice_number or "-" }}</td>
         <td>
-          <a href="{{ url_for('admin.order_detail', order_id=order.id) }}">
-            {{ order.order_number or order.id }}
-          </a>
+          <a href="{{ url_for('admin.order_detail', order_id=order.id) }}"
+            >{{ order.order_number or order.id }}</a
+          >
         </td>
         <td>{{ order.user.first_name }} {{ order.user.last_name }}</td>
         <td>{{ order.user.email }}</td>
@@ -93,6 +98,7 @@ content %}
           >
           {% endif %}
         </td>
+        <td>{{ order.note or "-" }}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -123,11 +129,9 @@ content %}
               .data()
               .unique()
               .sort()
-              .each(function (d, j) {
+              .each(function (d) {
                 var cleanText = $("<div>").html(d).text();
-                if (
-                  select.find('option[value="' + cleanText + '"]').length === 0
-                ) {
+                if (!select.find("option[value='" + cleanText + "']").length) {
                   select.append(
                     '<option value="' +
                       cleanText +

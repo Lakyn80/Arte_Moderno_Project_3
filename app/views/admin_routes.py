@@ -9,6 +9,8 @@ from flask import make_response
 from app.models import Order
 from sqlalchemy.orm import joinedload
 from app.forms.admin_forms import AdminUpdateOrderStatusForm
+from app.forms.admin_forms import AdminUpdateOrderStatusForm, AdminUpdateOrderNoteForm
+
 
 from app import db, bcrypt, mail
 from app.models import Product, OrderItem, CartItem, User
@@ -272,6 +274,7 @@ def admin_orders():
     user_email = request.args.get("email")
     date_from = request.args.get("from")
     date_to = request.args.get("to")
+    search_term = request.args.get("search")  # NOVÉ hledací pole (faktura/jméno)
 
     orders = Order.query.options(
         joinedload(Order.user),
@@ -280,7 +283,16 @@ def admin_orders():
 
     if user_email:
         orders = orders.join(User).filter(User.email.ilike(f"%{user_email}%"))
-    
+
+    if search_term:
+        orders = orders.join(User).filter(
+            db.or_(
+                Order.invoice_number.ilike(f"%{search_term}%"),
+                User.first_name.ilike(f"%{search_term}%"),
+                User.last_name.ilike(f"%{search_term}%")
+            )
+        )
+
     if date_from:
         orders = orders.filter(Order.created_at >= date_from)
     if date_to:
@@ -289,22 +301,30 @@ def admin_orders():
     orders = orders.order_by(Order.created_at.desc()).all()
     return render_template("admin_orders.html", orders=orders)
 
+
 # 📄 Detail objednávky
 
 @admin.route("/order/<int:order_id>", methods=["GET", "POST"])
 @admin_required
 def order_detail(order_id):
     order = Order.query.get_or_404(order_id)
-    form = AdminUpdateOrderStatusForm()
 
-    if form.validate_on_submit():
-        order.status = form.status.data
+    status_form = AdminUpdateOrderStatusForm()
+    note_form = AdminUpdateOrderNoteForm()
+
+    # Změna stavu objednávky
+    if status_form.validate_on_submit() and 'status' in request.form:
+        order.status = status_form.status.data
         db.session.commit()
         flash("Stav objednávky byl úspěšně změněn.", "success")
         return redirect(url_for("admin.order_detail", order_id=order.id))
 
-    form.status.data = order.status  # předvyplnit aktuální stav
-    return render_template("admin_order_detail.html", order=order, form=form)
+    # Předvyplnění formulářů
+    status_form.status.data = order.status
+    note_form.note.data = order.note
+
+    return render_template("admin_order_detail.html", order=order, status_form=status_form, note_form=note_form)
+
 
 
 @admin.route("/order/<int:order_id>/update_status", methods=["POST"])
@@ -315,4 +335,19 @@ def update_order_status(order_id):
     order.status = new_status
     db.session.commit()
     flash("Stav objednávky byl aktualizován.", "success")
+    return redirect(url_for("admin.order_detail", order_id=order.id))
+
+@admin.route("/order/<int:order_id>/update_note", methods=["POST"])
+@admin_required
+def update_order_note(order_id):
+    order = Order.query.get_or_404(order_id)
+    form = AdminUpdateOrderNoteForm()
+
+    if form.validate_on_submit():
+        order.note = form.note.data
+        db.session.commit()
+        flash("Poznámka byla uložena.", "success")
+    else:
+        flash("Chyba při ukládání poznámky.", "danger")
+
     return redirect(url_for("admin.order_detail", order_id=order.id))

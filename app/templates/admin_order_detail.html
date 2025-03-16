@@ -1,5 +1,6 @@
 {% extends "layout.html" %} {% block title %}Detail objednávky{% endblock %} {%
 block content %}
+
 <div class="order-detail-wrapper">
   <h2>📄 Detail objednávky</h2>
 
@@ -15,15 +16,15 @@ block content %}
       <strong>Celková cena:</strong> {{ "%.2f"|format(order.total_price) }} Kč
     </p>
 
-    <p><strong>Stav objednávky:</strong></p>
+    <h4>📝 Změna stavu objednávky</h4>
     <form
       method="POST"
       action="{{ url_for('admin.update_order_status', order_id=order.id) }}"
       class="status-form"
     >
-      {{ form.hidden_tag() }} {{ form.status.label }} {{
-      form.status(class="status-select") }} {{
-      form.submit(class="status-submit") }}
+      {{ status_form.hidden_tag() }} {{ status_form.status.label }}<br />
+      {{ status_form.status(class="status-select") }}<br />
+      {{ status_form.submit(class="status-submit") }}
     </form>
   </div>
 
@@ -35,13 +36,13 @@ block content %}
     }}
   </p>
   <p><strong>Email:</strong> {{ order.user.email }}</p>
-  <p><strong>Telefon:</strong> {{ order.user.phone or '-' }}</p>
+  <p><strong>Telefon:</strong> {{ order.user.phone or "-" }}</p>
 
   <h3>🏠 Doručovací adresa</h3>
-  <p>{{ order.address or '-' }}</p>
+  <p>{{ order.address or "-" }}</p>
 
   <h3>🏢 Fakturační adresa</h3>
-  <p>{{ order.billing_address or '-' }}</p>
+  <p>{{ order.billing_address or "-" }}</p>
 
   <hr />
 
@@ -67,6 +68,19 @@ block content %}
     </tbody>
   </table>
 
+  <hr />
+
+  <h3>📝 Poznámka k objednávce</h3>
+  <form
+    method="POST"
+    action="{{ url_for('admin.update_order_note', order_id=order.id) }}"
+    class="note-form"
+  >
+    {{ note_form.hidden_tag() }} {{ note_form.note.label }}<br />
+    {{ note_form.note(rows=4, cols=80) }}<br />
+    {{ note_form.submit(class="note-submit") }}
+  </form>
+
   <div class="back-button">
     <a href="{{ url_for('admin.admin_orders') }}"
       >⬅️ Zpět na přehled objednávek</a
@@ -87,7 +101,8 @@ block content %}
   }
 
   .order-detail-wrapper h2,
-  .order-detail-wrapper h3 {
+  .order-detail-wrapper h3,
+  .order-detail-wrapper h4 {
     margin-bottom: 15px;
     color: #333;
   }
@@ -96,30 +111,35 @@ block content %}
     margin: 6px 0;
   }
 
-  .status-form {
+  .status-form,
+  .note-form {
     display: flex;
+    flex-direction: column;
     gap: 10px;
-    margin-top: 8px;
-    align-items: center;
+    margin-top: 10px;
   }
 
-  .status-select {
+  .status-select,
+  .note-form textarea {
     padding: 6px 12px;
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 14px;
   }
 
-  .status-submit {
+  .status-submit,
+  .note-submit {
     padding: 6px 12px;
     background-color: #007bff;
     border: none;
     color: white;
     border-radius: 5px;
     cursor: pointer;
+    width: fit-content;
   }
 
-  .status-submit:hover {
+  .status-submit:hover,
+  .note-submit:hover {
     background-color: #0056b3;
   }
 
@@ -160,4 +180,5 @@ block content %}
     color: white;
   }
 </style>
+
 {% endblock %}

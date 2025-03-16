@@ -36,3 +36,22 @@ class AdminUpdateOrderStatusForm(FlaskForm):
         ("zrušeno", "Zrušeno"),
     ], validators=[DataRequired()])
     submit = SubmitField("Uložit změnu")
+
+from flask_wtf import FlaskForm
+from wtforms import SelectField, SubmitField, TextAreaField
+from wtforms.validators import DataRequired, Optional
+
+# 📌 Formulář pro změnu stavu objednávky
+class AdminUpdateOrderStatusForm(FlaskForm):
+    status = SelectField("Změnit stav", choices=[
+        ("nová", "Nová"),
+        ("čeká", "Čeká"),
+        ("zaplaceno", "Zaplaceno"),
+        ("zrušeno", "Zrušeno")
+    ], validators=[DataRequired()])
+    submit = SubmitField("💾 Uložit stav")
+
+# 📝 Formulář pro poznámku k objednávce
+class AdminUpdateOrderNoteForm(FlaskForm):
+    note = TextAreaField("Poznámka k objednávce", validators=[Optional()])
+    submit = SubmitField("💾 Uložit poznámku")
