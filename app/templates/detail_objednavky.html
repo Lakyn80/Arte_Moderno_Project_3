@@ -1,92 +1,183 @@
-{% extends "layout.html" %}
-{% block title %}Detail objednávky{% endblock %}
-{% block content %}
+{% extends "layout.html" %} {% block title %}Detail objednávky{% endblock %} {%
+block content %}
 
-<h2>🧾 Detail objednávky {{ order.invoice_number }}</h2>
+<div class="order-detail-wrapper">
+  <h2>🧾 Detail objednávky č. {{ order.invoice_number }}</h2>
 
-<h3>Faktura č. {{ order.invoice_number }}</h3>
+  <div class="order-info">
+    <p>
+      <strong>📅 Datum objednávky:</strong> {{ local_time.strftime('%d.%m.%Y
+      %H:%M') }}
+    </p>
+    <p><strong>💰 Celková cena:</strong> {{ order.total_price }} Kč</p>
+  </div>
 
-<p>
-  📅 Datum: {{ local_time.strftime('%d.%m.%Y %H:%M') }}
-</p>
+  <h3>📦 Seznam produktů</h3>
+  <div class="order-table-wrapper">
+    <table class="order-table">
+      <thead>
+        <tr>
+          <th>Produkt</th>
+          <th>Množství</th>
+          <th>Cena za kus</th>
+          <th>Mezisoučet</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in order.items %}
+        <tr>
+          <td>{{ item.product.name }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ "%.2f"|format(item.price_per_item) }} Kč</td>
+          <td>{{ "%.2f"|format(item.quantity * item.price_per_item) }} Kč</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-<h3>📦 Produkty:</h3>
-<table>
-  <thead>
-    <tr>
-      <th>Název produktu</th>
-      <th>Množství</th>
-      <th>Cena za kus</th>
-      <th>Mezisoučet</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for item in order.items %}
-    <tr>
-      <td>{{ item.product.name }}</td>
-      <td>{{ item.quantity }}</td>
-      <td>{{ item.price_per_item }} Kč</td>
-      <td>{{ item.quantity * item.price_per_item }} Kč</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <div class="order-addresses">
+    <div>
+      <h4>📍 Dodací adresa</h4>
+      <p>{{ order.address or '-' }}</p>
+    </div>
+    <div>
+      <h4>📑 Fakturační adresa</h4>
+      <p>{{ order.billing_address or '-' }}</p>
+    </div>
+  </div>
 
-<h3>💰 Celková cena: <strong>{{ order.total_price }} Kč</strong></h3>
-
-<h3>📍 Dodací adresa:</h3>
-<p>{{ order.address or '-' }}</p>
-
-<h3>📑 Fakturační adresa:</h3>
-<p>{{ order.billing_address or '-' }}</p>
-
-<hr />
-<a
-  href="{{ url_for('views.stahnout_fakturu', order_id=order.id) }}"
-  class="btn-order"
->⬇ Stáhnout fakturu (PDF)</a>
-
-<a
-  href="{{ url_for('views.poslat_fakturu_emailem', order_id=order.id) }}"
-  class="btn-order"
->📧 Poslat fakturu e-mailem</a>
-
-<p>
-  <a href="{{ url_for('views.moje_objednavky') }}" class="btn-order"
-  >← Zpět na moje objednávky</a>
-</p>
+  <div class="order-actions">
+    <a
+      href="{{ url_for('views.stahnout_fakturu', order_id=order.id) }}"
+      class="order-btn"
+    >
+      ⬇ Stáhnout fakturu (PDF)
+    </a>
+    <a
+      href="{{ url_for('views.poslat_fakturu_emailem', order_id=order.id) }}"
+      class="order-btn"
+    >
+      📧 Poslat fakturu e-mailem
+    </a>
+    <a
+      href="{{ url_for('views.moje_objednavky') }}"
+      class="order-btn secondary"
+    >
+      ← Zpět na moje objednávky
+    </a>
+  </div>
+</div>
 
 <style>
-  table {
+  .order-detail-wrapper {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+  }
+
+  .order-detail-wrapper h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+  }
+
+  .order-info p {
+    margin-bottom: 10px;
+  }
+
+  .order-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .order-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 30px;
   }
 
-  table th,
-  table td {
-    border: 1px solid #ccc;
-    padding: 8px 12px;
+  .order-table th,
+  .order-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
     text-align: left;
   }
 
-  table th {
-    background-color: #f4f4f4;
+  .order-table th {
+    background-color: #f8f8f8;
+    color: #333;
   }
 
-  .btn-order {
-    display: inline-block;
+  .order-addresses {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 30px;
+  }
+
+  .order-addresses div {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .order-addresses h4 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+  }
+
+  .order-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+
+  .order-btn {
     padding: 10px 20px;
     background-color: #007bff;
     color: white;
     text-decoration: none;
     border-radius: 6px;
-    margin-right: 10px;
-    margin-top: 10px;
+    transition: background-color 0.3s ease;
+    text-align: center;
   }
 
-  .btn-order:hover {
+  .order-btn:hover {
     background-color: #0056b3;
+  }
+
+  .order-btn.secondary {
+    background-color: #6c757d;
+  }
+
+  .order-btn.secondary:hover {
+    background-color: #5a6268;
+  }
+
+  @media (max-width: 600px) {
+    .order-detail-wrapper {
+      padding: 20px;
+      font-size: 15px;
+    }
+
+    .order-table th,
+    .order-table td {
+      font-size: 14px;
+    }
+
+    .order-btn {
+      width: 100%;
+    }
+
+    .order-addresses {
+      flex-direction: column;
+    }
   }
 </style>
 
