@@ -70,11 +70,15 @@ content %}
       <tr>
         <td>{{ order.invoice_number or "-" }}</td>
         <td>
-          <a href="{{ url_for('admin.order_detail', order_id=order.id) }}"
-            >{{ order.order_number or order.id }}</a
-          >
+          <a href="{{ url_for('admin.order_detail', order_id=order.id) }}">
+            {{ order.order_number or order.id }}
+          </a>
         </td>
-        <td>{{ order.user.first_name }} {{ order.user.last_name }}</td>
+        <td>
+          <a href="{{ url_for('admin.user_detail', user_id=order.user.id) }}">
+            {{ order.user.first_name }} {{ order.user.last_name }}
+          </a>
+        </td>
         <td>{{ order.user.email }}</td>
         <td>
           <ul>

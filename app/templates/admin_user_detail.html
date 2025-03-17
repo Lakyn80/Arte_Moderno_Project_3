@@ -1,0 +1,120 @@
+{% extends "layout.html" %} {% block title %}Profil zákazníka{% endblock %} {%
+block content %}
+
+<div class="user-profile-wrapper">
+  <h2>👤 Profil zákazníka</h2>
+
+  <div class="user-info">
+    <p><strong>Jméno:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Telefon:</strong> {{ user.phone or "-" }}</p>
+    <p><strong>Firma:</strong> {{ user.company or "-" }}</p>
+    <p><strong>IČO:</strong> {{ user.company_id or "-" }}</p>
+    <p><strong>DIČ:</strong> {{ user.vat_id or "-" }}</p>
+    <p><strong>Poznámka:</strong> {{ user.note or "-" }}</p>
+    <p><strong>Doručovací adresa:</strong> {{ user.address or "-" }}</p>
+    <p><strong>Fakturační adresa:</strong> {{ user.billing_address or "-" }}</p>
+  </div>
+
+  <hr />
+
+  <h3>📦 Objednávky zákazníka</h3>
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Číslo objednávky</th>
+        <th>Datum</th>
+        <th>Stav</th>
+        <th>Celková cena</th>
+        <th>Detail</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.order_number or order.id }}</td>
+        <td>{{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+        <td>{{ order.status or "-" }}</td>
+        <td>{{ "%.2f"|format(order.total_price) }} Kč</td>
+        <td>
+          <a href="{{ url_for('admin.order_detail', order_id=order.id) }}"
+            >👁 Zobrazit</a
+          >
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5">Zákazník zatím nemá žádné objednávky.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="back-button">
+    <a href="{{ url_for('admin.admin_orders') }}"
+      >⬅️ Zpět na přehled objednávek</a
+    >
+  </div>
+</div>
+
+<style>
+  .user-profile-wrapper {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px;
+  }
+
+  .user-profile-wrapper h2,
+  .user-profile-wrapper h3 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .user-info p {
+    margin: 6px 0;
+  }
+
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 20px;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+
+  .admin-table th {
+    background-color: #f5f5f5;
+  }
+
+  .back-button {
+    margin-top: 30px;
+  }
+
+  .back-button a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    padding: 6px 12px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .back-button a:hover {
+    background-color: #007bff;
+    color: white;
+  }
+</style>
+
+{% endblock %}

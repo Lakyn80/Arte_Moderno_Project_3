@@ -351,3 +351,10 @@ def update_order_note(order_id):
         flash("Chyba při ukládání poznámky.", "danger")
 
     return redirect(url_for("admin.order_detail", order_id=order.id))
+
+@admin.route("/user/<int:user_id>")
+@admin_required
+def user_detail(user_id):
+    user = User.query.get_or_404(user_id)
+    user_orders = Order.query.filter_by(user_id=user.id).order_by(Order.created_at.desc()).all()
+    return render_template("admin_user_detail.html", user=user, orders=user_orders)
