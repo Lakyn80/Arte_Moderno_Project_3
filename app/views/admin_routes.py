@@ -382,3 +382,20 @@ def manage_discounts():
     discount_codes = DiscountCode.query.order_by(DiscountCode.created_at.desc()).all()
     return render_template("admin_discounts.html", form=form, discount_codes=discount_codes)
 
+@admin.route("/order/<int:order_id>/restore", methods=["POST"])
+@admin_required
+def restore_order_for_user(order_id):
+    order = Order.query.get_or_404(order_id)
+    order.visible_to_user = True
+    db.session.commit()
+    flash("Objednávka byla opět zobrazena klientovi.", "success")
+    return redirect(url_for("admin.user_detail", user_id=order.user_id))
+
+@admin.route("/order/<int:order_id>/hide", methods=["POST"])
+@admin_required
+def hide_order_from_user(order_id):
+    order = Order.query.get_or_404(order_id)
+    order.visible_to_user = False
+    db.session.commit()
+    flash("Objednávka byla skryta z profilu klienta.", "info")
+    return redirect(url_for("admin.user_detail", user_id=order.user_id))

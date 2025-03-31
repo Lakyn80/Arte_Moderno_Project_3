@@ -3,8 +3,10 @@ from flask_login import UserMixin
 from flask import url_for
 from app.extensions import db
 
-
+# ------------------------ User ------------------------
 class User(db.Model, UserMixin):
+    __tablename__ = 'user'
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), nullable=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -33,8 +35,10 @@ class User(db.Model, UserMixin):
     orders = db.relationship('Order', back_populates='user', lazy=True)
 
 
+# ------------------------ Product ------------------------
 class Product(db.Model):
     __tablename__ = 'product'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     description = db.Column(db.Text, nullable=True)
@@ -50,7 +54,10 @@ class Product(db.Model):
         return url_for('static', filename='images/default_product.jpg')
 
 
+# ------------------------ CartItem ------------------------
 class CartItem(db.Model):
+    __tablename__ = 'cart_item'
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
@@ -59,7 +66,10 @@ class CartItem(db.Model):
     product = db.relationship('Product', backref='cart_items')
 
 
+# ------------------------ OrderItem ------------------------
 class OrderItem(db.Model):
+    __tablename__ = 'order_item'
+
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
@@ -70,7 +80,10 @@ class OrderItem(db.Model):
     order = db.relationship('Order', back_populates='items')
 
 
+# ------------------------ Inquiry ------------------------
 class Inquiry(db.Model):
+    __tablename__ = 'inquiry'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), nullable=False)
@@ -78,7 +91,10 @@ class Inquiry(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+# ------------------------ Order ------------------------
 class Order(db.Model):
+    __tablename__ = 'order'
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     total_price = db.Column(db.Float, nullable=False)
@@ -89,12 +105,19 @@ class Order(db.Model):
     address = db.Column(db.Text, nullable=True)
     billing_address = db.Column(db.Text, nullable=True)
     note = db.Column(db.Text)
+    visible_to_user = db.Column(db.Boolean, default=True)  # 👈 New flag
 
-    user = db.relationship("User", back_populates="orders")
-    items = db.relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
+    user = db.relationship('User', back_populates='orders')
+    items = db.relationship('OrderItem', back_populates='order', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f"<Order {self.id} | User {self.user_id} | Visible: {self.visible_to_user}>"
 
 
+# ------------------------ DiscountCode ------------------------
 class DiscountCode(db.Model):
+    __tablename__ = 'discount_code'
+
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(32), unique=True, nullable=False)
     discount_percent = db.Column(db.Integer, nullable=False)

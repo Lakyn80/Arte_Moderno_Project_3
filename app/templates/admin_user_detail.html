@@ -26,13 +26,13 @@ block content %}
         <th>Datum</th>
         <th>Stav</th>
         <th>Celková cena</th>
-        <th>Detail</th>
+        <th>Akce</th>
       </tr>
     </thead>
     <tbody>
       {% for order in orders %}
       <tr>
-        <td>{{ order.order_number or order.id }}</td>
+        <td>{{ order.invoice_number or order.id }}</td>
         <td>{{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
         <td>{{ order.status or "-" }}</td>
         <td>{{ "%.2f"|format(order.total_price) }} Kč</td>
@@ -40,6 +40,30 @@ block content %}
           <a href="{{ url_for('admin.order_detail', order_id=order.id) }}"
             >👁 Zobrazit</a
           >
+          {% if order.visible_to_user %}
+          <form
+            method="POST"
+            action="{{ url_for('admin.hide_order_from_user', order_id=order.id) }}"
+            style="display: inline"
+          >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <button type="submit" class="btn btn-sm btn-warning">
+              ❌ Skrýt
+            </button>
+          </form>
+          {% else %}
+          <span style="color: gray">(skryto)</span>
+          <form
+            method="POST"
+            action="{{ url_for('admin.restore_order_for_user', order_id=order.id) }}"
+            style="display: inline"
+          >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <button type="submit" class="btn btn-sm btn-success">
+              🔁 Obnovit
+            </button>
+          </form>
+          {% endif %}
         </td>
       </tr>
       {% else %}
@@ -58,62 +82,25 @@ block content %}
 </div>
 
 <style>
-  .user-profile-wrapper {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 15px;
-  }
-
-  .user-profile-wrapper h2,
-  .user-profile-wrapper h3 {
-    margin-bottom: 20px;
-    color: #333;
-  }
-
-  .user-info p {
-    margin: 6px 0;
-  }
-
-  .admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    margin-top: 20px;
-  }
-
-  .admin-table th,
-  .admin-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-  }
-
-  .admin-table th {
-    background-color: #f5f5f5;
-  }
-
-  .back-button {
-    margin-top: 30px;
-  }
-
-  .back-button a {
-    text-decoration: none;
-    color: #007bff;
-    font-weight: bold;
-    padding: 6px 12px;
-    border: 1px solid #007bff;
+  .btn.btn-sm.btn-warning {
+    margin-left: 8px;
+    background-color: #ffc107;
+    border: none;
+    color: #212529;
+    padding: 5px 8px;
+    font-size: 12px;
     border-radius: 5px;
-    transition: background-color 0.2s ease-in-out;
+    cursor: pointer;
   }
-
-  .back-button a:hover {
-    background-color: #007bff;
+  .btn.btn-sm.btn-success {
+    margin-left: 8px;
+    background-color: #28a745;
+    border: none;
     color: white;
+    padding: 5px 8px;
+    font-size: 12px;
+    border-radius: 5px;
+    cursor: pointer;
   }
 </style>
 

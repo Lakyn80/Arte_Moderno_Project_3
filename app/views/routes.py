@@ -231,46 +231,52 @@ def view_cart():
 @views.route("/moje-objednavky")
 @login_required
 def moje_objednavky():
-    orders = current_user.orders
+    # Zobrazit pouze objednávky, které nejsou skryté
+    orders = Order.query.filter_by(user_id=current_user.id, visible_to_user=True).order_by(Order.created_at.desc()).all()
+
     order_data = []
     for order in orders:
         client_tz = timezone(order.timezone or 'UTC')
         local_time = order.created_at.replace(tzinfo=UTC).astimezone(client_tz)
         order_data.append((order, local_time))
+
     return render_template("moje_objednavky.html", order_data=order_data)
+
 
 @views.route("/objednavka/<int:order_id>")
 @login_required
 def detail_objednavky(order_id):
-    order = Order.query.filter_by(id=order_id, user_id=current_user.id).first()
+    order = Order.query.filter_by(id=order_id, user_id=current_user.id, visible_to_user=True).first()
     if not order:
-        flash("Objednávka nebyla nalezena.", "warning")
+        flash("Objednávka nebyla nalezena nebo byla skryta administrátorem.", "warning")
         return redirect(url_for("views.moje_objednavky"))
 
     client_tz = timezone(order.timezone or 'UTC')
     local_time = order.created_at.replace(tzinfo=UTC).astimezone(client_tz)
     return render_template("detail_objednavky.html", order=order, local_time=local_time)
 
+
 # ---------- FAKTURA PDF ----------
 @views.route("/objednavka/<int:order_id>/faktura")
 @login_required
 def stahnout_fakturu(order_id):
-    order = Order.query.filter_by(id=order_id, user_id=current_user.id).first()
+    order = Order.query.filter_by(id=order_id, user_id=current_user.id, visible_to_user=True).first()
     if not order:
-        flash("Objednávka nebyla nalezena.", "warning")
+        flash("Faktura není dostupná. Objednávka byla možná skryta.", "warning")
         return redirect(url_for("views.moje_objednavky"))
 
     pdf_buffer = generate_invoice_pdf(order)
     return send_file(pdf_buffer, mimetype="application/pdf", as_attachment=True,
                      download_name=f"faktura_{order.invoice_number}.pdf")
 
+
 # ---------- POSLAT FAKTURU EMAILEM ----------
 @views.route("/objednavka/<int:order_id>/faktura/email")
 @login_required
 def poslat_fakturu_emailem(order_id):
-    order = Order.query.filter_by(id=order_id, user_id=current_user.id).first()
+    order = Order.query.filter_by(id=order_id, user_id=current_user.id, visible_to_user=True).first()
     if not order:
-        flash("Objednávka nebyla nalezena.", "warning")
+        flash("Objednávka byla skryta a faktura není dostupná.", "warning")
         return redirect(url_for("views.moje_objednavky"))
 
     pdf_buffer = generate_invoice_pdf(order)
@@ -282,3 +288,4 @@ def poslat_fakturu_emailem(order_id):
     mail.send(msg)
     flash("Faktura byla odeslána na váš e-mail.", "success")
     return redirect(url_for("views.moje_objednavky"))
+
