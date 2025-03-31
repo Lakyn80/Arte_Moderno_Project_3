@@ -1,11 +1,12 @@
-from flask import Blueprint, request, jsonify, render_template, session
+from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for
 from flask_login import login_required, current_user
-from app.models import Product, CartItem
+from app.models import Product, CartItem, DiscountCode
 from app import db
+from sqlalchemy import func
 
 cart = Blueprint("cart", __name__, url_prefix="/cart")
 
-# Funkce pro aktualizaci počtu položek v košíku
+# Aktualizace počtu položek v košíku (session)
 def update_cart_count():
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
     session['cart_item_count'] = sum(item.quantity for item in cart_items)
@@ -24,7 +25,6 @@ def add_to_cart():
     if not product:
         return jsonify({'message': 'Produkt neexistuje.'}), 404
 
-    # Kontrola skladu
     if product.stock <= 0:
         return jsonify({'message': 'Produkt není skladem.'}), 400
 
@@ -39,12 +39,10 @@ def add_to_cart():
         db.session.add(new_item)
 
     db.session.commit()
+    update_cart_count()
     return jsonify({'message': f'Produkt {product.name} byl přidán do košíku.'}), 200
 
-
-
-
-# Odebrání produktu z košíku
+# Odebrání jednoho kusu produktu
 @cart.route('/remove_one', methods=['POST'])
 @login_required
 def remove_one_from_cart():
@@ -62,7 +60,6 @@ def remove_one_from_cart():
     if not product:
         return jsonify({"error": "Produkt nebyl nalezen."}), 404
 
-    # Vrátit jeden kus zpět
     product.stock += 1
     product.is_active = True
 
@@ -72,35 +69,10 @@ def remove_one_from_cart():
         db.session.delete(cart_item)
 
     db.session.commit()
+    update_cart_count()
     return jsonify({"message": "Odebrán jeden kus produktu z košíku."}), 200
 
-
-
-# Zobrazení košíku
-@cart.route('/view', methods=['GET'])
-@login_required
-def view_cart():
-    # Odstranění osamocených položek před zobrazením košíku
-    orphaned_items = CartItem.query.filter(~CartItem.product.has()).all()
-    for item in orphaned_items:
-        db.session.delete(item)
-    db.session.commit()
-
-    cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
-    total_price = sum(item.product.price * item.quantity for item in cart_items)
-
-    return render_template('cart.html', cart_items=cart_items, total_price=total_price)
-
-
-# Route pro počet položek v košíku
-@cart.route('/count', methods=['GET'])
-@login_required
-def cart_count():
-    cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
-    cart_item_count = sum(item.quantity for item in cart_items)
-    return jsonify({'cart_item_count': cart_item_count})
-
-
+# Odebrání všech kusů produktu
 @cart.route('/remove_all', methods=['POST'])
 @login_required
 def remove_all_from_cart():
@@ -118,11 +90,57 @@ def remove_all_from_cart():
     if not product:
         return jsonify({"error": "Produkt nebyl nalezen."}), 404
 
-    # Vrátit všechny kusy zpět
     product.stock += cart_item.quantity
     product.is_active = True
 
     db.session.delete(cart_item)
     db.session.commit()
+    update_cart_count()
 
     return jsonify({"message": "Celý produkt byl odebrán z košíku."}), 200
+
+# Zobrazení košíku (s aplikovanou slevou)
+@cart.route('/view', methods=['GET'])
+@login_required
+def view_cart():
+    orphaned_items = CartItem.query.filter(~CartItem.product.has()).all()
+    for item in orphaned_items:
+        db.session.delete(item)
+    db.session.commit()
+
+    cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+
+    discount_percent = session.get("discount_percent")
+    if discount_percent:
+        total_price = total_price * (1 - discount_percent / 100)
+
+    return render_template("cart.html", cart_items=cart_items, total_price=round(total_price, 2))
+
+# Aplikace slevového kódu
+@cart.route('/apply_discount', methods=['POST'])
+@login_required
+def apply_discount():
+    code = request.form.get("discount_code", "").strip().lower()
+    discount = DiscountCode.query.filter(func.lower(DiscountCode.code) == code).first()
+
+    if not discount:
+        session["discount_error"] = "Slevový kód neexistuje."
+        session.pop("discount_percent", None)
+    elif not discount.is_valid():
+        session["discount_error"] = "Slevový kód je neplatný nebo expirovaný."
+        session.pop("discount_percent", None)
+    else:
+        session["discount_success"] = True
+        session["discount_percent"] = discount.discount_percent
+        session.pop("discount_error", None)
+
+    return redirect(url_for('cart.view_cart'))
+
+# Počet položek v košíku
+@cart.route('/count', methods=['GET'])
+@login_required
+def cart_count():
+    cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+    cart_item_count = sum(item.quantity for item in cart_items)
+    return jsonify({'cart_item_count': cart_item_count})

@@ -1,6 +1,19 @@
-{% extends "layout.html" %} {% block title %}Košík{% endblock %} {% block content %}
+{% extends "layout.html" %} {% block title %}Košík{% endblock %} {% block
+content %}
 <div class="cart-wrapper">
   <h1>Váš košík</h1>
+  <form method="POST" action="{{ url_for('cart.apply_discount') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <label for="discount_code">Slevový kód:</label>
+    <input type="text" name="discount_code" required />
+    <button type="submit">Uplatnit</button>
+
+    {% if session.discount_error %}
+    <p style="color: red">{{ session.discount_error }}</p>
+    {% elif session.discount_success %}
+    <p style="color: green">Sleva {{ session.discount_percent }}% uplatněna.</p>
+    {% endif %}
+  </form>
 
   <div class="cart-container">
     {% if cart_items %}
@@ -48,13 +61,19 @@
 
     <div class="cart-summary">
       <h2>Celkem: {{ total_price }} Kč</h2>
-      <a href="{{ url_for('views.galerie') }}" class="btn-continue">Pokračovat v nakupování</a>
-      <a href="{{ url_for('checkout.checkout_summary') }}" class="btn-order">Přejít k objednávce</a>
+      <a href="{{ url_for('views.galerie') }}" class="btn-continue"
+        >Pokračovat v nakupování</a
+      >
+      <a href="{{ url_for('checkout.checkout_summary') }}" class="btn-order"
+        >Přejít k objednávce</a
+      >
     </div>
     {% else %}
     <div class="empty-cart">
       <p>Váš košík je prázdný.</p>
-      <a href="{{ url_for('views.galerie') }}" class="btn-continue">Přejít do galerie</a>
+      <a href="{{ url_for('views.galerie') }}" class="btn-continue"
+        >Přejít do galerie</a
+      >
     </div>
     {% endif %}
   </div>
@@ -198,7 +217,7 @@
 </style>
 
 <script>
-  document.querySelectorAll(".remove-one").forEach(button => {
+  document.querySelectorAll(".remove-one").forEach((button) => {
     button.addEventListener("click", async () => {
       const productId = button.closest(".cart-item-row").dataset.productId;
       const response = await fetch("/cart/remove_one", {
@@ -207,7 +226,7 @@
           "Content-Type": "application/json",
           "X-CSRFToken": window.CSRF_TOKEN,
         },
-        body: JSON.stringify({ product_id: productId })
+        body: JSON.stringify({ product_id: productId }),
       });
       const data = await response.json();
       console.log(data.message);
@@ -215,7 +234,7 @@
     });
   });
 
-  document.querySelectorAll(".remove-all").forEach(button => {
+  document.querySelectorAll(".remove-all").forEach((button) => {
     button.addEventListener("click", async () => {
       const productId = button.closest(".cart-item-row").dataset.productId;
       const response = await fetch("/cart/remove_all", {
@@ -224,7 +243,7 @@
           "Content-Type": "application/json",
           "X-CSRFToken": window.CSRF_TOKEN,
         },
-        body: JSON.stringify({ product_id: productId })
+        body: JSON.stringify({ product_id: productId }),
       });
       const data = await response.json();
       console.log(data.message);
