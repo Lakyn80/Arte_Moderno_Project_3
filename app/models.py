@@ -1,7 +1,6 @@
 from datetime import datetime
 from flask_login import UserMixin
 from flask import url_for
-
 from app.extensions import db
 
 
@@ -13,9 +12,6 @@ class User(db.Model, UserMixin):
     role = db.Column(db.String(20), default='user')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_admin = db.Column(db.Boolean, default=False)
-    first_name = db.Column(db.String(100))
-    last_name = db.Column(db.String(100))
-
 
     # PROFIL – volitelné údaje
     first_name = db.Column(db.String(64), nullable=True)
@@ -47,7 +43,6 @@ class Product(db.Model):
     stock = db.Column(db.Integer, nullable=True)
     is_active = db.Column(db.Boolean, default=True)
     position_id = db.Column(db.Integer, nullable=True)
-
 
     def get_image_url(self):
         if self.image_filename:
@@ -93,7 +88,19 @@ class Order(db.Model):
     timezone = db.Column(db.String(64), nullable=True)
     address = db.Column(db.Text, nullable=True)
     billing_address = db.Column(db.Text, nullable=True)
-    note = db.Column(db.Text)  # ✅ přidaný sloupec
+    note = db.Column(db.Text)
 
     user = db.relationship("User", back_populates="orders")
     items = db.relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
+
+
+class DiscountCode(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(32), unique=True, nullable=False)
+    discount_percent = db.Column(db.Integer, nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
+    expires_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def is_valid(self):
+        return self.is_active and (self.expires_at is None or self.expires_at > datetime.utcnow())

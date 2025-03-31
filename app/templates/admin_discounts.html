@@ -1,0 +1,33 @@
+{% extends "layout.html" %} {% block title %}Slevové kupony{% endblock %} {%
+block content %}
+
+<h2>Slevové kupony</h2>
+
+<form method="POST">
+  {{ form.hidden_tag() }}
+
+  <label for="code">Kód:</label>
+  {{ form.code(size=32) }}
+
+  <label for="discount_percent">Sleva (%):</label>
+  {{ form.discount_percent(min=1, max=100) }}
+
+  <label for="expires_at">Platnost do (YYYY-MM-DD):</label>
+  {{ form.expires_at() }}
+
+  <button type="submit">Přidat kupon</button>
+</form>
+
+<h3>Existující kupony</h3>
+<ul>
+  {% for kupon in discount_codes %}
+  <li>
+    <strong>{{ kupon.code }}</strong> – {{ kupon.discount_percent }}% {% if
+    kupon.expires_at %} (do {{ kupon.expires_at.strftime('%d.%m.%Y') }}){% endif
+    %} {% if not kupon.is_active %} <em>[neaktivní]</em>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+
+<a href="{{ url_for('admin.dashboard') }}">⬅️ Zpět na dashboard</a>
+{% endblock %}

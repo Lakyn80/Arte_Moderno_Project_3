@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from datetime import datetime
 from flask_login import login_required, current_user, login_user
 from werkzeug.utils import secure_filename
 from functools import wraps
@@ -11,9 +12,10 @@ from sqlalchemy.orm import joinedload
 from app.forms.admin_forms import AdminUpdateOrderStatusForm
 from app.forms.admin_forms import AdminUpdateOrderStatusForm, AdminUpdateOrderNoteForm
 
+from app.forms.admin_forms import AdminDiscountForm
 
 from app import db, bcrypt, mail
-from app.models import Product, OrderItem, CartItem, User
+from app.models import Product, OrderItem, CartItem, User, DiscountCode
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
 from app.forms.admin_forms import (
@@ -358,3 +360,25 @@ def user_detail(user_id):
     user = User.query.get_or_404(user_id)
     user_orders = Order.query.filter_by(user_id=user.id).order_by(Order.created_at.desc()).all()
     return render_template("admin_user_detail.html", user=user, orders=user_orders)
+
+
+
+@admin.route("/discounts", methods=["GET", "POST"])
+@admin_required
+def manage_discounts():
+    form = AdminDiscountForm()
+
+    if form.validate_on_submit():
+        new_code = DiscountCode(
+            code=form.code.data.strip(),
+            discount_percent=form.discount_percent.data,
+            expires_at=form.expires_at.data
+        )
+        db.session.add(new_code)
+        db.session.commit()
+        flash("Slevový kupon byl přidán.", "success")
+        return redirect(url_for("admin.manage_discounts"))
+
+    discount_codes = DiscountCode.query.order_by(DiscountCode.created_at.desc()).all()
+    return render_template("admin_discounts.html", form=form, discount_codes=discount_codes)
+

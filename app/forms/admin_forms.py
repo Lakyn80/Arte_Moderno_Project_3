@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField
-from wtforms.validators import DataRequired, Email, Length, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField
+from wtforms.validators import DataRequired, Email, Length, EqualTo, NumberRange
 
 
 class AdminLoginForm(FlaskForm):
@@ -55,3 +55,8 @@ class AdminUpdateOrderStatusForm(FlaskForm):
 class AdminUpdateOrderNoteForm(FlaskForm):
     note = TextAreaField("Poznámka k objednávce", validators=[Optional()])
     submit = SubmitField("💾 Uložit poznámku")
+
+class AdminDiscountForm(FlaskForm):
+    code = StringField("Kód", validators=[DataRequired()])
+    discount_percent = IntegerField("Sleva (%)", validators=[DataRequired(), NumberRange(min=1, max=100)])
+    expires_at = DateField("Platnost do", validators=[Optional()])
