@@ -28,6 +28,15 @@ block content %}
     value="{{ product.position_id }}"
     required
   /><br /><br />
+  
+  <label for="stock">Sklad (ks):</label>
+  <input
+    type="number"
+    name="stock"
+    id="stock"
+    value="{{ product.stock }}"
+    required
+  /><br /><br />
 
   <label for="name">Název produktu:</label>
   <input
