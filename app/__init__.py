@@ -1,24 +1,18 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_mail import Mail
-from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, current_user
-from flask_wtf import CSRFProtect
+from flask_login import current_user
 
-# Inicializace rozšíření
-db = SQLAlchemy()
-migrate = Migrate()
-mail = Mail()
-bcrypt = Bcrypt()
-login_manager = LoginManager()
-csrf = CSRFProtect()
+# Import rozšíření (pouze import z extensions)
+from app.extensions import db, mail, bcrypt, login_manager, csrf, migrate
+
+# Import API blueprints (musí být až po extensions!)
+from app.views.api_cart import api_cart
+
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object('app.config.Config')
 
-    # Inicializace rozšíření
+    # Inicializace rozšíření s aplikací
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
@@ -26,18 +20,18 @@ def create_app():
     login_manager.init_app(app)
     csrf.init_app(app)
 
-    # LoginManager nastavení
+    # Nastavení LoginManageru
     login_manager.login_view = "views.login"
     login_manager.login_message_category = "info"
 
-    # Import modelů až po inicializaci rozšíření
+    # Modely (až po init extensions)
     from app.models import User, CartItem
 
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    # CLI příkazy (volitelné)
+    # CLI příkazy
     from app.commands import register_commands
     register_commands(app)
 
@@ -47,12 +41,13 @@ def create_app():
     from app.views.cart_routes import cart
     from app.views.checkout_routes import checkout
 
+    app.register_blueprint(api_cart, url_prefix="/api/cart")
     app.register_blueprint(views)
     app.register_blueprint(admin, url_prefix="/admin")
     app.register_blueprint(cart)
     app.register_blueprint(checkout)
 
-    # Kontextový procesor pro počet položek v košíku
+    # Kontextový procesor – zobrazování počtu v košíku
     @app.context_processor
     def inject_cart_count():
         if current_user.is_authenticated:

@@ -1,7 +1,8 @@
 from datetime import datetime
 from flask_login import UserMixin
 from flask import url_for
-from app import db
+
+from app.extensions import db
 
 
 class User(db.Model, UserMixin):
