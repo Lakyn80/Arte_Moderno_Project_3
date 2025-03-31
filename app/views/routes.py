@@ -195,25 +195,6 @@ def profile():
     return render_template('profile.html', form=form)
 
 # ---------- KOŠÍK ----------
-@cart.route("/add", methods=["POST"])
-@login_required
-def add_to_cart():
-    data = request.get_json()
-    product_id = data.get("product_id")
-
-    product = Product.query.get(product_id)
-    if not product:
-        return jsonify({"error": "Produkt nenalezen"}), 404
-
-    cart_item = CartItem.query.filter_by(user_id=current_user.id, product_id=product_id).first()
-    if cart_item:
-        cart_item.quantity += 1
-    else:
-        cart_item = CartItem(user_id=current_user.id, product_id=product_id, quantity=1)
-        db.session.add(cart_item)
-
-    db.session.commit()
-    return jsonify({"message": "Produkt přidán do košíku"}), 200
 
 @cart.route("/remove", methods=["POST"])
 @login_required

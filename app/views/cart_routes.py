@@ -24,7 +24,7 @@ def add_to_cart():
     if not product:
         return jsonify({'message': 'Produkt neexistuje.'}), 404
 
-    # Kontrola dostupnosti na skladě
+    # Kontrola skladu
     if product.stock <= 0:
         return jsonify({'message': 'Produkt není skladem.'}), 400
 
