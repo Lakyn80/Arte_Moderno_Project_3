@@ -45,19 +45,26 @@ def add_to_cart():
 
 
 # Odebrání produktu z košíku
-@cart.route('/remove', methods=['POST'])
+@cart.route('/remove_one', methods=['POST'])
 @login_required
-def remove_from_cart():
+def remove_one_from_cart():
     data = request.get_json()
-    product_id = data.get('product_id')
+    product_id = data.get("product_id")
 
     if not product_id:
         return jsonify({"error": "Produkt nebyl specifikován."}), 400
 
     cart_item = CartItem.query.filter_by(user_id=current_user.id, product_id=product_id).first()
-
     if not cart_item:
         return jsonify({"error": "Produkt není v košíku."}), 404
+
+    product = Product.query.get(product_id)
+    if not product:
+        return jsonify({"error": "Produkt nebyl nalezen."}), 404
+
+    # Vrátit jeden kus zpět
+    product.stock += 1
+    product.is_active = True
 
     if cart_item.quantity > 1:
         cart_item.quantity -= 1
@@ -65,7 +72,8 @@ def remove_from_cart():
         db.session.delete(cart_item)
 
     db.session.commit()
-    return jsonify({"message": "Produkt byl úspěšně odstraněn z košíku."}), 200
+    return jsonify({"message": "Odebrán jeden kus produktu z košíku."}), 200
+
 
 
 # Zobrazení košíku
@@ -91,3 +99,30 @@ def cart_count():
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
     cart_item_count = sum(item.quantity for item in cart_items)
     return jsonify({'cart_item_count': cart_item_count})
+
+
+@cart.route('/remove_all', methods=['POST'])
+@login_required
+def remove_all_from_cart():
+    data = request.get_json()
+    product_id = data.get("product_id")
+
+    if not product_id:
+        return jsonify({"error": "Produkt nebyl specifikován."}), 400
+
+    cart_item = CartItem.query.filter_by(user_id=current_user.id, product_id=product_id).first()
+    if not cart_item:
+        return jsonify({"error": "Produkt není v košíku."}), 404
+
+    product = Product.query.get(product_id)
+    if not product:
+        return jsonify({"error": "Produkt nebyl nalezen."}), 404
+
+    # Vrátit všechny kusy zpět
+    product.stock += cart_item.quantity
+    product.is_active = True
+
+    db.session.delete(cart_item)
+    db.session.commit()
+
+    return jsonify({"message": "Celý produkt byl odebrán z košíku."}), 200

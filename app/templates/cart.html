@@ -1,5 +1,4 @@
-{% extends "layout.html" %} {% block title %}Košík{% endblock %} {% block
-content %}
+{% extends "layout.html" %} {% block title %}Košík{% endblock %} {% block content %}
 <div class="cart-wrapper">
   <h1>Váš košík</h1>
 
@@ -39,12 +38,8 @@ content %}
           <td>{{ item.quantity }}</td>
           <td>{{ item.product.price * item.quantity }} Kč</td>
           <td>
-            <button
-              class="remove-from-cart btn-delete"
-              data-product-id="{{ item.product.id }}"
-            >
-              🗑️ Odebrat
-            </button>
+            <button class="remove-one btn-delete">-1</button>
+            <button class="remove-all btn-delete">🗑️ Vše</button>
           </td>
         </tr>
         {% endfor %}
@@ -53,19 +48,13 @@ content %}
 
     <div class="cart-summary">
       <h2>Celkem: {{ total_price }} Kč</h2>
-      <a href="{{ url_for('views.galerie') }}" class="btn-continue"
-        >Pokračovat v nakupování</a
-      >
-      <a href="{{ url_for('checkout.checkout_summary') }}" class="btn-order"
-        >Přejít k objednávce</a
-      >
+      <a href="{{ url_for('views.galerie') }}" class="btn-continue">Pokračovat v nakupování</a>
+      <a href="{{ url_for('checkout.checkout_summary') }}" class="btn-order">Přejít k objednávce</a>
     </div>
     {% else %}
     <div class="empty-cart">
       <p>Váš košík je prázdný.</p>
-      <a href="{{ url_for('views.galerie') }}" class="btn-continue"
-        >Přejít do galerie</a
-      >
+      <a href="{{ url_for('views.galerie') }}" class="btn-continue">Přejít do galerie</a>
     </div>
     {% endif %}
   </div>
@@ -110,7 +99,6 @@ content %}
     font-weight: 600;
   }
 
-  /* Styly pro obrázky */
   .image-cell {
     width: 60px;
     height: 60px;
@@ -142,15 +130,15 @@ content %}
     display: block;
   }
 
-  /* Tlačítka a akce */
   .btn-delete {
     background-color: #dc3545;
     color: white;
     border: none;
-    padding: 6px 12px;
+    padding: 6px 10px;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    margin: 2px;
+    font-size: 0.85rem;
   }
 
   .btn-delete:hover {
@@ -193,6 +181,7 @@ content %}
     margin-bottom: 20px;
     font-size: 1.1em;
   }
+
   .btn-order {
     display: inline-block;
     background-color: #ffc107;
@@ -202,10 +191,45 @@ content %}
     border-radius: 4px;
     margin-left: 10px;
   }
+
   .btn-order:hover {
     background-color: #e0a800;
   }
 </style>
 
-<script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+<script>
+  document.querySelectorAll(".remove-one").forEach(button => {
+    button.addEventListener("click", async () => {
+      const productId = button.closest(".cart-item-row").dataset.productId;
+      const response = await fetch("/cart/remove_one", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": window.CSRF_TOKEN,
+        },
+        body: JSON.stringify({ product_id: productId })
+      });
+      const data = await response.json();
+      console.log(data.message);
+      location.reload();
+    });
+  });
+
+  document.querySelectorAll(".remove-all").forEach(button => {
+    button.addEventListener("click", async () => {
+      const productId = button.closest(".cart-item-row").dataset.productId;
+      const response = await fetch("/cart/remove_all", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": window.CSRF_TOKEN,
+        },
+        body: JSON.stringify({ product_id: productId })
+      });
+      const data = await response.json();
+      console.log(data.message);
+      location.reload();
+    });
+  });
+</script>
 {% endblock %}
