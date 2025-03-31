@@ -2,6 +2,30 @@
 %} {% block content %}
 <h2>🧾 Rekapitulace objednávky</h2>
 
+{% if discount_percent %}
+<div class="discount-info">
+  {% set original_total = total_price / (1 - (discount_percent / 100)) %} {% set
+  discount_amount = original_total - total_price %}
+  <h3>
+    💸 Sleva: <strong>{{ discount_percent }} %</strong>
+    (–{{ discount_amount | round(2) }} Kč)
+  </h3>
+  <form method="POST" action="{{ url_for('cart.remove_discount') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <button type="submit" class="btn-remove-discount">
+      ❌ Odebrat slevový kód
+    </button>
+  </form>
+</div>
+{% else %}
+<form method="POST" action="{{ url_for('cart.apply_discount') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <label for="discount_code">Slevový kód:</label>
+  <input type="text" name="discount_code" required />
+  <button type="submit">Uplatnit</button>
+</form>
+{% endif %}
+
 <form method="POST" action="{{ url_for('checkout.confirm_order') }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <input type="hidden" id="timezone" name="timezone" />
@@ -23,7 +47,8 @@
     {% endfor %}
   </ul>
 
-  <h3>💰 Celková cena: <strong>{{ total_price }} Kč</strong></h3>
+  <h3>💰 Celková cena: <strong>{{ total_price | round(2) }} Kč</strong></h3>
+
   <p>
     <strong
       >Číslo objednávky bude vygenerováno při potvrzení objednávky.</strong
@@ -93,6 +118,19 @@
     font-size: 0.9rem;
     color: #555;
     text-align: center;
+  }
+
+  .btn-remove-discount {
+    background-color: #dc3545;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .btn-remove-discount:hover {
+    background-color: #bd2130;
   }
 </style>
 {% endblock %}

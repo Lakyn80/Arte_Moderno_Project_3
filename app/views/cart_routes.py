@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for
+from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app.models import Product, CartItem, DiscountCode
 from app import db
@@ -144,3 +144,13 @@ def cart_count():
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
     cart_item_count = sum(item.quantity for item in cart_items)
     return jsonify({'cart_item_count': cart_item_count})
+
+
+@cart.route('/remove_discount', methods=['POST'])
+@login_required
+def remove_discount():
+    session.pop("discount_percent", None)
+    session.pop("discount_success", None)
+    session.pop("discount_error", None)
+    flash("Slevový kód byl odebrán.", "info")
+    return redirect(request.referrer or url_for('cart.view_cart'))
