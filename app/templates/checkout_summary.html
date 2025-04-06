@@ -36,7 +36,7 @@
     });
   </script>
 
-  <h3>🛒 Vaše produkty:</h3>
+  <h3>🛒 Vaše díla:</h3>
   <ul>
     {% for item in cart_items %}
     <li>
@@ -82,55 +82,135 @@
   form {
     max-width: 700px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 25px 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    font-family: "Segoe UI", sans-serif;
+    color: #212529;
   }
 
-  textarea {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    resize: vertical;
-  }
-
-  .btn-order {
-    padding: 10px 20px;
-    background-color: #28a745;
-    border: none;
-    color: white;
-    font-size: 1.1rem;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-
-  .btn-order:hover {
-    background-color: #218838;
-  }
-
-  ul {
-    padding-left: 20px;
+  h2,
+  h3 {
+    color: #333;
+    text-align: center;
+    margin-top: 0;
     margin-bottom: 20px;
   }
 
-  .note-info {
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
     margin-top: 20px;
-    font-size: 0.9rem;
-    color: #555;
-    text-align: center;
+  }
+
+  input[type="text"],
+  textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #fff;
+    transition: border-color 0.2s ease-in-out;
+  }
+
+  input[type="text"]:focus,
+  textarea:focus {
+    border-color: #6c757d;
+    outline: none;
+  }
+
+  ul {
+    padding-left: 25px;
+    margin-bottom: 20px;
+    list-style-type: disc;
+    color: #495057;
+  }
+
+  .btn-order {
+    padding: 12px 24px;
+    background-color: #495057;
+    color: #fff;
+    border: none;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto 0;
+    transition: background-color 0.2s;
+  }
+
+  .btn-order:hover {
+    background-color: #343a40;
   }
 
   .btn-remove-discount {
-    background-color: #dc3545;
-    color: white;
-    padding: 6px 12px;
+    background-color: #adb5bd;
+    color: #212529;
+    padding: 6px 14px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
+    margin-top: 10px;
   }
 
   .btn-remove-discount:hover {
-    background-color: #bd2130;
+    background-color: #868e96;
+  }
+
+  .note-info {
+    margin-top: 30px;
+    font-size: 0.9rem;
+    color: #6c757d;
+    text-align: center;
+  }
+
+  .discount-info {
+    text-align: center;
+    background-color: #e9ecef;
+    border-left: 4px solid #adb5bd;
+    padding: 15px 20px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+  }
+
+  input[name="discount_code"] {
+    width: 160px;
+    padding: 6px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    background-color: #fff;
+    transition: border-color 0.2s ease-in-out;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  form button[type="submit"] {
+    padding: 6px 14px;
+    font-size: 0.95rem;
+    border-radius: 4px;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #dee2e6;
+    margin: 30px 0;
+  }
+
+  @media (max-width: 600px) {
+    form {
+      padding: 15px;
+    }
+
+    .btn-order {
+      width: 100%;
+    }
+
+    .btn-remove-discount {
+      width: 100%;
+      margin-top: 10px;
+    }
   }
 </style>
 {% endblock %}

@@ -170,6 +170,10 @@
   },
   "active": "6d14ea88312d0fd8",
   "lastOpenFiles": [
+    "app/static/images/ChatGPT_2.png",
+    "app/static/images/ChatGPT_2.png.crdownload",
+    "app/static/images/ChatGPT_1.png",
+    "app/static/images/ChatGPT_1.png.crdownload",
     "app/templates/profil.html",
     "reset_client_data.py",
     "full_reset.py",
@@ -182,7 +186,6 @@
     "app/static/uploads/ID_34.jpg",
     "app/static/uploads/ID_33_S.jpg",
     "app/static/uploads/ID_32_S.jpg",
-    "app/static/uploads/ID_31_S.jpg",
     "DEPLOYING.md"
   ]
 }

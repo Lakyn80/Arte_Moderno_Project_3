@@ -1,4 +1,4 @@
-/* Reset a základní styly */
+/* RESET + ZÁKLADNÍ NASTAVENÍ */
 * {
   margin: 0;
   padding: 0;
@@ -14,15 +14,20 @@ body {
   min-height: 100vh;
 }
 
-/* Navbar - moderní styl */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ========== NAVBAR ========== */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 5%;
-  background: rgba(255, 255, 255, 0.8); /* Poloprůhledné pozadí */
-  backdrop-filter: blur(10px); /* Efekt rozmazání */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Jemný stín */
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   position: fixed;
   width: 100%;
   top: 0;
@@ -30,7 +35,6 @@ body {
   height: 80px;
 }
 
-/* Logo */
 .navbar-logo img {
   height: 60px;
   transition: transform 0.3s ease;
@@ -40,85 +44,31 @@ body {
   transform: scale(1.1);
 }
 
-/* Navigační odkazy */
 .navbar-links {
   display: flex;
   gap: 20px;
 }
 
-/* Odkazy v navbaru */
 .navbar a {
-  color: black; /* Černá barva odkazů */
-  text-decoration: none; /* Odstranění výchozího podtržení */
   font-weight: 500;
   padding: 10px 15px;
   border-radius: 5px;
-  position: relative; /* Umožní přidání vlastního podtržení */
+  position: relative;
   transition: all 0.3s ease-in-out;
-  display: inline-block; /* Umožní přizpůsobení šířky podtržení */
 }
 
-.alert-success {
-  color: green;
-  background-color: #e6ffe6;
-  border: 1px solid green;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-}
-
-.alert-error {
-  color: red;
-  background-color: #ffe6e6;
-  border: 1px solid red;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-}
-
-.flash-message {
-  padding: 10px;
-  margin: 10px auto;
-  width: 90%;
-  max-width: 600px;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: bold;
-}
-.alert-success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-.alert-error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-.alert-info {
-  background-color: #d1ecf1;
-  color: #0c5460;
-  border: 1px solid #bee5eb;
-}
-.alert-warning {
-  background-color: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeeba;
-}
-
-/* Efekt při najetí myší - podtržení dál od textu */
 .navbar a:hover::after,
 .navbar a.active::after {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -1px; /* Posunutí podtržení jen o 1 pixel dolů */
-  width: 100%; /* Přizpůsobení délky textu */
-  height: 2px; /* Tloušťka podtržení */
-  background-color: black; /* Barva podtržení */
+  bottom: -1px;
+  width: 100%;
+  height: 2px;
+  background-color: black;
 }
 
-/* Responsivní navbar */
+/* RESPONSIVE NAVBAR */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
@@ -133,53 +83,144 @@ body {
   }
 }
 
+/* ========== HERO SECTION ========== */
+.hero-section {
+  position: relative;
+  height: 80vh;
+  background: linear-gradient(
+      to bottom right,
+      rgba(0, 0, 0, 0.4),
+      rgba(0, 0, 0, 0.2)
+    ),
+    url("../images/ChatGPT_2.png") no-repeat center center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  overflow: hidden;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
 .hero-text {
-  font-size: 1rem;
-  font-weight: 200;
-  color: #333;
-  text-align: justify;
-  padding: 0 90px;
-}
-
-/* Hlavní obsah */
-.main-content {
-  flex: 1;
-  padding-top: 20px;
+  position: relative;
+  z-index: 2;
   text-align: center;
-  margin-top: 100px;
+  padding: 0 20px;
 }
 
-/* Galerie fotek – Pouze pro home.html */
+.main-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  font-weight: 300;
+}
+
+/* ========== GALERIE ========== */
 .home-gallery-container {
   width: 100%;
   overflow: hidden;
+  padding: 40px 0;
+  background-color: #fff;
 }
 
 .home-gallery-flex {
   display: flex;
-  width: 100%;
-  padding-top: 20px;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 0 20px;
 }
 
-.home-gallery-flex .gallery-item {
-  flex: 1;
-  overflow: hidden; /* Zabrání přetékání při zvětšení */
+.gallery-item {
+  flex: 1 1 22%;
+  min-width: 250px;
+  max-width: 300px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  background-color: #fafafa;
+  transition: transform 0.3s ease;
 }
 
-.home-gallery-flex .gallery-item img {
+.gallery-item img {
   width: 100%;
-  height: 250px;
+  height: 220px;
   object-fit: cover;
   display: block;
-  transition: transform 0.3s ease-in-out; /* Plynulý efekt */
+  transition: transform 0.3s ease-in-out;
 }
 
-/* Efekt zvětšení při najetí myší */
-.home-gallery-flex .gallery-item img:hover {
-  transform: scale(1.05); /* Zvětší obrázek o 5% */
+.gallery-item:hover img {
+  transform: scale(1.05);
 }
 
-/* Footer */
+/* ========== HLAVNÍ OBSAH ========== */
+.main-content {
+  flex: 1;
+  padding-top: 20px;
+  margin-top: 100px;
+  text-align: center;
+}
+
+/* ========== FLASH MESSAGES ========== */
+.flash-container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 300px;
+  z-index: 1000;
+}
+
+.flash-message {
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.5s ease-in-out;
+  text-align: center;
+}
+
+.alert-success {
+  background-color: #28a745;
+}
+
+.alert-error {
+  background-color: #dc3545;
+}
+
+.alert-info {
+  background-color: #17a2b8;
+}
+
+.alert-warning {
+  background-color: #ffc107;
+  color: black;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== FOOTER ========== */
 .footer {
   width: 100%;
   background-color: #f9f9f9;
@@ -195,11 +236,15 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   row-gap: 1rem;
 }
 
-/* Sociální sítě */
+.footer-text {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+/* SOCIÁLNÍ ODKAZY */
 .social-links {
   display: flex;
   gap: 1rem;
@@ -228,24 +273,29 @@ body {
   height: 18px;
 }
 
-/* Responzivita */
+/* ========== RESPONSIVITA GALERIE ========== */
 @media (max-width: 900px) {
-  .home-gallery-flex {
-    flex-wrap: wrap;
-  }
-  .home-gallery-flex .gallery-item {
-    flex: 1 1 33.333%; /* 3 sloupce */
+  .gallery-item {
+    flex: 1 1 30%;
   }
 }
 
 @media (max-width: 600px) {
-  .home-gallery-flex .gallery-item {
-    flex: 1 1 50%; /* 2 sloupce */
+  .gallery-item {
+    flex: 1 1 45%;
   }
 }
 
 @media (max-width: 400px) {
-  .home-gallery-flex .gallery-item {
-    flex: 1 1 100%; /* 1 obrázek na řádek */
+  .gallery-item {
+    flex: 1 1 90%;
+  }
+
+  .main-title {
+    font-size: 2.2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
   }
 }
