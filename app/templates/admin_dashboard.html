@@ -10,26 +10,19 @@ content %}
 <a href="{{ url_for('admin.add_product') }}" class="btn-add-product"
   >➕ Přidat nový produkt</a
 >
-<a href="{{ url_for('admin.admin_orders') }}">📋 Objednávky</a>
-
-<a
-  href="{{ url_for('admin.export_orders_csv') }}"
-  class="btn btn-sm btn-primary"
+<a href="{{ url_for('admin.admin_orders') }}" class="btn-action"
+  >📋 Objednávky</a
+>
+<a href="{{ url_for('admin.export_orders_csv') }}" class="btn-action"
   >📤 Export objednávek CSV</a
 >
-<a
-href="{{ url_for('admin.manage_discounts') }}"
-class="btn-admin-action"
+<a href="{{ url_for('admin.manage_discounts') }}" class="btn-action"
+  >💸 Slevové kupony</a
 >
-💸 Slevové kupony
-</a>
+
 <!-- Tabulka produktů -->
 <table class="admin-table">
   <thead>
-    <a href="{{ url_for('admin.admin_change_password') }}" class="btn-edit"
-      >🔑 Změnit heslo</a
-    >
-
     <tr>
       <th>Obrázek</th>
       <th>ID</th>
@@ -72,7 +65,6 @@ class="btn-admin-action"
           class="btn-edit"
           >✏️ Upravit</a
         >
-
         <form
           method="POST"
           action="{{ url_for('admin.delete_product', product_id=product.id) }}"
@@ -87,7 +79,6 @@ class="btn-admin-action"
             🗑️ Deaktivovat
           </button>
         </form>
-
         {% else %}
         <form
           method="POST"
@@ -103,8 +94,6 @@ class="btn-admin-action"
             🔄 Reaktivovat
           </button>
         </form>
-       
-
         <form
           method="POST"
           action="{{ url_for('admin.hard_delete_product', product_id=product.id) }}"
@@ -128,67 +117,119 @@ class="btn-admin-action"
 
 <!-- Styly -->
 <style>
+  /* Základní styly pro nadpisy */
   h2,
   h3 {
-    color: #333;
+    color: #444;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    font-family: "Roboto", sans-serif;
   }
 
+  /* Hlavní tlačítka */
   .btn-logout,
-  .btn-add-product {
+  .btn-add-product,
+  .btn-action {
     display: inline-block;
-    margin-bottom: 20px;
-    padding: 10px 15px;
-    background-color: #dc3545;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    margin: 10px;
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  /* Tlačítka pro akce */
+  .btn-logout {
+    background-color: #ff4d4f;
     color: white;
     text-decoration: none;
-    border-radius: 5px;
-    margin-right: 10px;
+  }
+
+  .btn-logout:hover {
+    background-color: #e63946;
+    transform: scale(1.05);
   }
 
   .btn-add-product {
     background-color: #28a745;
+    color: white;
+    text-decoration: none;
   }
 
-  .btn-logout:hover,
   .btn-add-product:hover {
-    opacity: 0.9;
+    background-color: #218838;
+    transform: scale(1.05);
   }
 
+  .btn-action {
+    background-color: #17a2b8;
+    color: white;
+    text-decoration: none;
+  }
+
+  .btn-action:hover {
+    background-color: #138496;
+    transform: scale(1.05);
+  }
+
+  /* Tabulka produktů */
   .admin-table {
-    width: 90%;
+    width: 95%;
+    margin: 20px auto;
     border-collapse: collapse;
-    margin: 0 auto;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
   }
 
   .admin-table th,
   .admin-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
+    padding: 12px;
     text-align: center;
+    border: 1px solid #ddd;
+    font-size: 14px;
   }
 
   .admin-table th {
-    background-color: #f4f4f4;
+    background-color: #f0f0f0;
     color: #333;
   }
 
-  .product-thumbnail {
-    width: 60px;
-    height: auto;
-    border-radius: 5px;
+  .admin-table tr:nth-child(even) {
+    background-color: #f9f9f9;
   }
 
+  /* Obrázky produktů */
+  .product-thumbnail {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  /* Stav produktu */
+  .status-active {
+    color: #28a745;
+    font-weight: bold;
+  }
+
+  .status-inactive {
+    color: #dc3545;
+    font-weight: bold;
+  }
+
+  /* Akční tlačítka */
   .actions a,
   .actions button {
-    margin: 3px;
-    padding: 5px 10px;
+    margin: 5px;
+    padding: 8px 14px;
+    font-size: 14px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    text-decoration: none;
+    transition: background-color 0.3s ease;
   }
 
   .btn-edit {
@@ -227,34 +268,12 @@ class="btn-admin-action"
     background-color: #000;
   }
 
+  /* Formuláře pro akce */
   .delete-form,
   .reactivate-form,
   .hard-delete-form {
     display: inline;
   }
-
-  .status-active {
-    color: #28a745;
-    font-weight: bold;
-  }
-
-  .status-inactive {
-    color: #dc3545;
-    font-weight: bold;
-  }
-  .btn-admin-action {
-    display: inline-block;
-    margin: 10px;
-    padding: 10px 20px;
-    background-color: #17a2b8;
-    color: white;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: bold;
-  }
-
-  .btn-admin-action:hover {
-    background-color: #138496;
-  }
 </style>
+
 {% endblock %}
