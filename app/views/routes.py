@@ -1,17 +1,14 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session, send_file
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session, send_file, current_app
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 from datetime import datetime
 from pytz import timezone, UTC
+from itsdangerous import URLSafeTimedSerializer
 from app import db, bcrypt, mail
 from app.models import User, Product, Inquiry, CartItem, Order
-from app.forms.forms import ProfileForm
+from app.forms.forms import ProfileForm, ContactForm, ClientResetRequestForm, ClientResetPasswordForm
 from app.pdf_generator import generate_invoice_pdf
-from app.forms.forms import ClientResetRequestForm, ClientResetPasswordForm
-from itsdangerous import URLSafeTimedSerializer
-from flask import current_app
 
-# Blueprints
 views = Blueprint("views", __name__)
 cart = Blueprint("cart", __name__, url_prefix="/cart")
 
@@ -29,11 +26,12 @@ def galerie():
 # ---------- KONTAKTNÍ FORMULÁŘ ----------
 @views.route('/kontakt', methods=['GET', 'POST'])
 def kontakt():
-    if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        subject = request.form.get('subject') or 'Bez předmětu'
-        message = request.form.get('message')
+    form = ContactForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        email = form.email.data
+        subject = form.subject.data or 'Bez předmětu'
+        message = form.message.data
 
         try:
             owner_msg = Message(subject=f"Nová zpráva od {name} - {subject}",
@@ -55,7 +53,7 @@ def kontakt():
 
         return redirect(url_for('views.kontakt'))
 
-    return render_template('kontakt.html')
+    return render_template('kontakt.html', form=form)
 
 # ---------- VÝPIS DOTAZŮ ----------
 @views.route("/inquiries")
@@ -127,8 +125,7 @@ def logout():
     flash("Byl jste úspěšně odhlášen.", "info")
     return redirect(url_for("views.home"))
 
-
-# 📧 Klient žádá reset hesla
+# ---------- RESET HESLA ----------
 @views.route("/reset_password", methods=["GET", "POST"])
 def client_reset_request():
     form = ClientResetRequestForm()
@@ -156,8 +153,6 @@ Pokud jste žádost neodesílali, ignorujte tento e-mail.
             flash("Uživatel s tímto e-mailem nebyl nalezen.", "warning")
     return render_template("client_reset_request.html", form=form)
 
-
-# 🔓 Změna hesla po kliknutí na odkaz
 @views.route("/reset_password/<token>", methods=["GET", "POST"])
 def client_reset_token(token):
     serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
@@ -181,21 +176,36 @@ def client_reset_token(token):
 
     return render_template("client_reset_password.html", form=form)
 
-
 # ---------- PROFIL ----------
-@views.route('/profile', methods=['GET', 'POST'])
+@views.route("/profil", methods=["GET", "POST"])
 @login_required
-def profile():
+def profil():
     form = ProfileForm(obj=current_user)
+
     if form.validate_on_submit():
-        form.populate_obj(current_user)
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        current_user.phone = form.phone.data
+        current_user.address = form.address.data
+        current_user.billing_address = form.billing_address.data
+        current_user.city = form.city.data
+        current_user.postal_code = form.postal_code.data
+        current_user.country = form.country.data
+        current_user.company = form.company.data
+        current_user.company_id = form.company_id.data
+        current_user.vat_id = form.vat_id.data
+        current_user.note = form.note.data
+        current_user.date_of_birth = form.date_of_birth.data
+
         db.session.commit()
-        flash("Profil byl úspěšně uložen.", "success")
-        return redirect(url_for('views.profile'))
-    return render_template('profile.html', form=form)
+        flash("✅ Profil byl úspěšně uložen.", "success")
+        return redirect(url_for("views.profil"))
+
+    return render_template("profil.html", form=form, birthdate=current_user.date_of_birth, datetime=datetime)
+
+
 
 # ---------- KOŠÍK ----------
-
 @cart.route("/remove", methods=["POST"])
 @login_required
 def remove_from_cart():
@@ -227,13 +237,11 @@ def view_cart():
     ]
     return jsonify(cart_data), 200
 
-# ---------- MOJE OBJEDNÁVKY ----------
+# ---------- OBJEDNÁVKY ----------
 @views.route("/moje-objednavky")
 @login_required
 def moje_objednavky():
-    # Zobrazit pouze objednávky, které nejsou skryté
     orders = Order.query.filter_by(user_id=current_user.id, visible_to_user=True).order_by(Order.created_at.desc()).all()
-
     order_data = []
     for order in orders:
         client_tz = timezone(order.timezone or 'UTC')
@@ -241,7 +249,6 @@ def moje_objednavky():
         order_data.append((order, local_time))
 
     return render_template("moje_objednavky.html", order_data=order_data)
-
 
 @views.route("/objednavka/<int:order_id>")
 @login_required
@@ -255,8 +262,6 @@ def detail_objednavky(order_id):
     local_time = order.created_at.replace(tzinfo=UTC).astimezone(client_tz)
     return render_template("detail_objednavky.html", order=order, local_time=local_time)
 
-
-# ---------- FAKTURA PDF ----------
 @views.route("/objednavka/<int:order_id>/faktura")
 @login_required
 def stahnout_fakturu(order_id):
@@ -269,8 +274,6 @@ def stahnout_fakturu(order_id):
     return send_file(pdf_buffer, mimetype="application/pdf", as_attachment=True,
                      download_name=f"faktura_{order.invoice_number}.pdf")
 
-
-# ---------- POSLAT FAKTURU EMAILEM ----------
 @views.route("/objednavka/<int:order_id>/faktura/email")
 @login_required
 def poslat_fakturu_emailem(order_id):
@@ -288,4 +291,3 @@ def poslat_fakturu_emailem(order_id):
     mail.send(msg)
     flash("Faktura byla odeslána na váš e-mail.", "success")
     return redirect(url_for("views.moje_objednavky"))
-
