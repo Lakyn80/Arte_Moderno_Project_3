@@ -69,7 +69,7 @@ a {
   background-color: black;
 }
 
-/* ========== LANGUAGE SWITCHER (BURGER) ========== */
+/* ========== LANGUAGE SWITCHER ========== */
 .lang-burger {
   position: relative;
   cursor: pointer;
@@ -82,10 +82,6 @@ a {
 
 .lang-burger:hover {
   background-color: rgba(0, 0, 0, 0.05);
-}
-
-.lang-burger:hover .lang-menu {
-  display: block;
 }
 
 .lang-menu {
@@ -114,6 +110,10 @@ a {
 
 .lang-menu a:hover {
   background-color: #f0f0f0;
+}
+
+.lang-menu.show {
+  display: block;
 }
 
 /* RESPONSIVE NAVBAR */
@@ -204,12 +204,15 @@ a {
 .alert-success {
   background-color: #28a745;
 }
+
 .alert-error {
   background-color: #dc3545;
 }
+
 .alert-info {
   background-color: #17a2b8;
 }
+
 .alert-warning {
   background-color: #ffc107;
   color: black;
@@ -299,6 +302,7 @@ a {
   .main-title {
     font-size: 2.2rem;
   }
+
   .subtitle {
     font-size: 1rem;
   }

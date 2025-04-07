@@ -90,5 +90,8 @@
   "delivery_address": "Dodací adresa",
   "download_invoice": "Stáhnout fakturu (PDF)",
   "email_invoice": "Poslat fakturu e-mailem",
-  "back_to_orders": "Zpět na moje objednávky"
+  "back_to_orders": "Zpět na moje objednávky",
+  "username": "Uživatelské jméno",
+  "password": "Heslo",
+  "register_button": "Registrovat"
 }

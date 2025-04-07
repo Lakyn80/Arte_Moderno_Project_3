@@ -90,5 +90,8 @@
   "delivery_address": "Lieferadresse",
   "download_invoice": "Rechnung herunterladen (PDF)",
   "email_invoice": "Rechnung per E-Mail senden",
-  "back_to_orders": "Zurück zu meinen Bestellungen"
+  "back_to_orders": "Zurück zu meinen Bestellungen",
+  "username": "Benutzername",
+  "password": "Passwort",
+  "register_button": "Registrieren"
 }

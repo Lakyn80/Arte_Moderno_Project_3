@@ -90,5 +90,8 @@
   "delivery_address": "Адрес доставки",
   "download_invoice": "Скачать счет (PDF)",
   "email_invoice": "Отправить счет по e-mail",
-  "back_to_orders": "Назад к заказам"
+  "back_to_orders": "Назад к заказам",
+  "username": "Имя пользователя",
+  "password": "Пароль",
+  "register_button": "Зарегистрироваться"
 }

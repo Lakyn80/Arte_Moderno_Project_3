@@ -1,5 +1,5 @@
-{% extends "layout.html" %} {% block title %}Registrace{% endblock %} {% block
-head %}
+{% extends "layout.html" %} {% block title %}{{ g.t.get("register",
+"Registrace") }}{% endblock %} {% block head %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/register.css') }}"
@@ -9,16 +9,20 @@ head %}
   <form method="POST" action="{{ url_for('views.register') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-    <label for="username">Uživatelské jméno:</label>
+    <label for="username"
+      >{{ g.t.get("username", "Uživatelské jméno") }}:</label
+    >
     <input type="text" name="username" id="username" required />
 
-    <label for="email">E-mail:</label>
+    <label for="email">{{ g.t.get("email", "E-mail") }}:</label>
     <input type="email" name="email" id="email" required />
 
-    <label for="password">Heslo:</label>
+    <label for="password">{{ g.t.get("password", "Heslo") }}:</label>
     <input type="password" name="password" id="password" required />
 
-    <label for="confirm_password">Potvrzení hesla:</label>
+    <label for="confirm_password"
+      >{{ g.t.get("confirm_password", "Potvrzení hesla") }}:</label
+    >
     <input
       type="password"
       name="confirm_password"
@@ -26,7 +30,9 @@ head %}
       required
     />
 
-    <button type="submit">Registrovat</button>
+    <button type="submit">
+      {{ g.t.get("register_button", "Registrovat") }}
+    </button>
   </form>
 </div>
 {% endblock %}

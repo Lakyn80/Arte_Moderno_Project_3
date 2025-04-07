@@ -13,31 +13,6 @@
     {% block head %}{% endblock %}
   </head>
   <body>
-    <!-- Přepínač jazyků – burger styl -->
-    <div class="lang-burger" id="langToggle">
-      <button>🌐</button>
-      <div class="lang-menu">
-        <a href="{{ url_for('views.set_language', lang_code='cs') }}"
-          >🇨🇿 Čeština</a
-        >
-        <a href="{{ url_for('views.set_language', lang_code='en') }}"
-          >🇬🇧 English</a
-        >
-        <a href="{{ url_for('views.set_language', lang_code='ru') }}"
-          >🇷🇺 Русский</a
-        >
-        <a href="{{ url_for('views.set_language', lang_code='es') }}"
-          >🇪🇸 Español</a
-        >
-        <a href="{{ url_for('views.set_language', lang_code='de') }}"
-          >🇩🇪 Deutsch</a
-        >
-        <a href="{{ url_for('views.set_language', lang_code='fr') }}"
-          >🇫🇷 Français</a
-        >
-      </div>
-    </div>
-
     {% include "navbar.html" %}
 
     <div class="flash-container">
@@ -76,6 +51,7 @@
     </footer>
 
     <script>
+      // Automatické skrytí flash zpráv
       setTimeout(function () {
         const flashMessages = document.querySelectorAll(".flash-message");
         flashMessages.forEach((msg) => {
@@ -89,15 +65,23 @@
         .querySelector('meta[name="csrf-token"]')
         .getAttribute("content");
 
-      // Jazykový burger
-      const langToggle = document.getElementById("langToggle");
-      langToggle.addEventListener("click", function (e) {
-        e.stopPropagation();
-        langToggle.classList.toggle("open");
-      });
+      // Jazykový burger – otevření a zavření
+      document.addEventListener("DOMContentLoaded", () => {
+        const burger = document.querySelector(".lang-burger");
+        const menu = burger?.querySelector(".lang-menu");
 
-      document.addEventListener("click", function () {
-        langToggle.classList.remove("open");
+        if (burger && menu) {
+          burger.addEventListener("click", (e) => {
+            e.stopPropagation();
+            menu.classList.toggle("show");
+          });
+
+          document.addEventListener("click", (e) => {
+            if (!burger.contains(e.target)) {
+              menu.classList.remove("show");
+            }
+          });
+        }
       });
     </script>
   </body>
