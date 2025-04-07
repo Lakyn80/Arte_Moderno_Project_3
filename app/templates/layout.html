@@ -5,61 +5,50 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     <title>ArtModerno | {% block title %}{% endblock %}</title>
+
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/main.css') }}"
+      href="{{ url_for('static', filename='css/base.css') }}"
     />
-    <style>
-      .flash-container {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        width: 300px;
-        z-index: 1000;
-      }
-      .flash-message {
-        padding: 15px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        color: white;
-        font-weight: bold;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        animation: fadeIn 0.5s ease-in-out;
-      }
-      .alert-success {
-        background-color: #28a745;
-      }
-      .alert-error {
-        background-color: #dc3545;
-      }
-      .alert-info {
-        background-color: #17a2b8;
-      }
-      .alert-warning {
-        background-color: #ffc107;
-        color: black;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    </style>
+    {% block head %}{% endblock %}
   </head>
   <body>
+    <!-- Přepínač jazyků – burger styl -->
+    <div class="lang-burger" id="langToggle">
+      <button>🌐</button>
+      <div class="lang-menu">
+        <a href="{{ url_for('views.set_language', lang_code='cs') }}"
+          >🇨🇿 Čeština</a
+        >
+        <a href="{{ url_for('views.set_language', lang_code='en') }}"
+          >🇬🇧 English</a
+        >
+        <a href="{{ url_for('views.set_language', lang_code='ru') }}"
+          >🇷🇺 Русский</a
+        >
+        <a href="{{ url_for('views.set_language', lang_code='es') }}"
+          >🇪🇸 Español</a
+        >
+        <a href="{{ url_for('views.set_language', lang_code='de') }}"
+          >🇩🇪 Deutsch</a
+        >
+        <a href="{{ url_for('views.set_language', lang_code='fr') }}"
+          >🇫🇷 Français</a
+        >
+      </div>
+    </div>
+
     {% include "navbar.html" %}
+
     <div class="flash-container">
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %} {% for category, message in messages %}
       <div class="flash-message alert-{{ category }}">{{ message }}</div>
       {% endfor %} {% endif %} {% endwith %}
     </div>
+
     <main class="main-content">{% block content %}{% endblock %}</main>
+
     <footer class="footer">
       <div class="footer-content">
         <p class="footer-text">© 2025 Arte Moderno. Všechna práva vyhrazena.</p>
@@ -85,6 +74,7 @@
         </div>
       </div>
     </footer>
+
     <script>
       setTimeout(function () {
         const flashMessages = document.querySelectorAll(".flash-message");
@@ -94,10 +84,21 @@
         });
       }, 5000);
 
-      // Ensure CSRF token is globally available
+      // CSRF token
       window.CSRF_TOKEN = document
         .querySelector('meta[name="csrf-token"]')
         .getAttribute("content");
+
+      // Jazykový burger
+      const langToggle = document.getElementById("langToggle");
+      langToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        langToggle.classList.toggle("open");
+      });
+
+      document.addEventListener("click", function () {
+        langToggle.classList.remove("open");
+      });
     </script>
   </body>
 </html>

@@ -1,10 +1,12 @@
-from flask import Flask
+from flask import Flask, g, session
 from flask_login import current_user
+import json
+import os  # Pro práci s cestami
 
 # Import rozšíření (pouze import z extensions)
 from app.extensions import db, mail, bcrypt, login_manager, csrf, migrate
 
-# Import API blueprints (musí být až po extensions!)
+# Import API blueprintů (musí být až po extensions!)
 from app.views.api_cart import api_cart
 
 
@@ -12,7 +14,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object('app.config.Config')
 
-    # Inicializace rozšíření s aplikací
+    # Inicializace rozšíření
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
@@ -24,7 +26,7 @@ def create_app():
     login_manager.login_view = "views.login"
     login_manager.login_message_category = "info"
 
-    # Modely (až po init extensions)
+    # Načtení modelů (musí být po init_app)
     from app.models import User, CartItem
 
     @login_manager.user_loader
@@ -56,5 +58,21 @@ def create_app():
         else:
             cart_count = 0
         return dict(cart_item_count=cart_count)
+
+    # Načtení překladů z JSON – spolehlivě i s fallbackem
+    def load_translation():
+        lang = session.get("lang", "cs")
+        translations_dir = os.path.join(os.path.dirname(__file__), "static", "translation")
+        path = os.path.join(translations_dir, f"{lang}.json")
+
+        try:
+            with open(path, encoding="utf-8") as f:
+                content = f.read().strip()
+                g.t = json.loads(content) if content else {}
+        except (FileNotFoundError, json.JSONDecodeError):
+            g.t = {}
+
+    # Aktivace překladu před každým requestem
+    app.before_request(load_translation)
 
     return app

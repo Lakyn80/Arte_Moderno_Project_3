@@ -1,58 +1,161 @@
-/* Galerie - hlavní kontejner */
+.gallery-heading {
+  text-align: center;
+  font-size: 2.8rem;
+  margin-bottom: 50px;
+  color: #2c2c2c;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
 .gallery-container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    padding-bottom: 40px;
-  }
-  
-  /* Každý produkt */
-  .gallery-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 40px;
-  }
-  
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  padding-bottom: 40px;
+}
+
+.gallery-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 50px;
+  padding: 24px;
+  border-radius: 20px;
+  background: #f8f9fa;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item.reverse {
+  flex-direction: row-reverse;
+}
+
+.gallery-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.gallery-image {
+  flex: 1;
+  max-width: 500px;
+}
+
+.image-frame-wrapper {
+  transition: transform 0.4s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-frame-wrapper:hover {
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+.image-frame {
+  width: 100%;
+  max-height: 450px;
+  background-color: #eaeaea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #ccc;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+.image-frame img {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.gallery-info {
+  flex: 1;
+  max-width: 50%;
+  color: #333;
+}
+
+.gallery-info h3 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.gallery-description {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.gallery-price {
+  font-size: 1.4rem;
+  color: #198754;
+  margin-bottom: 10px;
+}
+
+.gallery-stock {
+  font-size: 1rem;
+  margin-bottom: 15px;
+  color: #444;
+}
+
+.gallery-stock .out-of-stock {
+  color: #dc3545;
+}
+
+.buy-button {
+  background-color: #0069d9;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.buy-button:hover {
+  background-color: #004b9c;
+}
+
+.buy-button[disabled] {
+  background-color: #bfbfbf;
+  cursor: not-allowed;
+}
+
+.empty-gallery-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  margin-top: 40px;
+}
+
+/* RESPONSIVITA */
+@media (max-width: 900px) {
+  .gallery-item,
   .gallery-item.reverse {
-    flex-direction: row-reverse;
+    flex-direction: column;
+    text-align: center;
   }
-  
-  /* Obrázek v rámečku */
-  .image-frame {
-    width: 400px;
-    height: 400px;
-    background-color: #f4f4f4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 5px solid #ccc;
-    border-radius: 10px;
-  }
-  
-  /* Text */
+
   .gallery-info {
-    flex: 1;
-    max-width: 50%;
+    max-width: 100%;
   }
-  
-  .gallery-info h3 {
-    font-size: 1.8rem;
-    font-weight: bold;
+
+  .image-frame {
+    max-width: 100%;
+    max-height: none;
   }
-  
-  .gallery-description {
-    font-size: 1.2rem;
-    color: #555;
-    margin-bottom: 10px;
+
+  .image-frame-wrapper:hover {
+    transform: scale(1.05);
   }
-  
-  .gallery-price {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #27ae60;
-  }
-  
+}

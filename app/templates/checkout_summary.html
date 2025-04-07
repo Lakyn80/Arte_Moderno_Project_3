@@ -1,28 +1,29 @@
-{% extends "layout.html" %} {% block title %}Rekapitulace objednávky{% endblock
-%} {% block content %}
-<h2>🧾 Rekapitulace objednávky</h2>
+{% extends "layout.html" %} {% block title %}{{ g.t['order_summary'] }}{%
+endblock %} {% block content %}
+
+<h2>🧾 {{ g.t['order_summary'] }}</h2>
 
 {% if discount_percent %}
 <div class="discount-info">
   {% set original_total = total_price / (1 - (discount_percent / 100)) %} {% set
   discount_amount = original_total - total_price %}
   <h3>
-    💸 Sleva: <strong>{{ discount_percent }} %</strong>
+    💸 {{ g.t['discount'] }}: <strong>{{ discount_percent }} %</strong>
     (–{{ discount_amount | round(2) }} Kč)
   </h3>
   <form method="POST" action="{{ url_for('cart.remove_discount') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <button type="submit" class="btn-remove-discount">
-      ❌ Odebrat slevový kód
+      ❌ {{ g.t['remove_discount'] }}
     </button>
   </form>
 </div>
 {% else %}
 <form method="POST" action="{{ url_for('cart.apply_discount') }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <label for="discount_code">Slevový kód:</label>
+  <label for="discount_code">{{ g.t['discount_code'] }}:</label>
   <input type="text" name="discount_code" required />
-  <button type="submit">Uplatnit</button>
+  <button type="submit">{{ g.t['apply_discount'] }}</button>
 </form>
 {% endif %}
 
@@ -36,7 +37,7 @@
     });
   </script>
 
-  <h3>🛒 Vaše díla:</h3>
+  <h3>🛒 {{ g.t['your_items'] }}</h3>
   <ul>
     {% for item in cart_items %}
     <li>
@@ -47,36 +48,33 @@
     {% endfor %}
   </ul>
 
-  <h3>💰 Celková cena: <strong>{{ total_price | round(2) }} Kč</strong></h3>
+  <h3>
+    💰 {{ g.t['total_price'] }}:
+    <strong>{{ total_price | round(2) }} Kč</strong>
+  </h3>
 
-  <p>
-    <strong
-      >Číslo objednávky bude vygenerováno při potvrzení objednávky.</strong
-    >
-  </p>
+  <p><strong>{{ g.t['order_number_note'] }}</strong></p>
 
   <hr />
-  <h3>📦 Doručovací údaje:</h3>
-  <label for="address">Adresa <span style="color: red">*</span></label
+  <h3>📦 {{ g.t['delivery_info'] }}</h3>
+  <label for="address"
+    >{{ g.t['address'] }} <span style="color: red">*</span></label
   ><br />
   <textarea name="address" id="address" rows="4" required>
 {{ current_user.address or '' }}</textarea
   >
 
-  <h3>📑 Fakturační údaje (volitelné):</h3>
-  <label for="billing_address">Fakturační adresa</label><br />
+  <h3>📑 {{ g.t['billing_info'] }}</h3>
+  <label for="billing_address">{{ g.t['billing_address'] }}</label><br />
   <textarea name="billing_address" id="billing_address" rows="4">
 {{ current_user.billing_address or '' }}</textarea
   >
 
   <br /><br />
-  <button type="submit" class="btn-order">✅ Odeslat objednávku</button>
+  <button type="submit" class="btn-order">✅ {{ g.t['submit_order'] }}</button>
 </form>
 
-<p class="note-info">
-  Po odeslání objednávky obdržíte potvrzovací e-mail a my vás budeme brzy
-  kontaktovat.
-</p>
+<p class="note-info">{{ g.t['confirmation_note'] }}</p>
 
 <style>
   form {

@@ -1,8 +1,12 @@
 {% extends "layout.html" %}
-{% block title %}Galerie{% endblock %}
+{% block title %}{{ g.t['gallery_title'] }}{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/galerie.css') }}">
+{% endblock %}
 
 {% block content %}
-<h1 class="gallery-heading">Galerie</h1>
+<h1 class="gallery-heading">{{ g.t['gallery_title'] }}</h1>
 
 <div class="gallery-container">
   {% for product in products %}
@@ -16,177 +20,22 @@
     </div>
     <div class="gallery-info">
       <h3>{{ product.name }}</h3>
-      <p class="gallery-description">{{ product.description or 'Žádný popis není dostupný.' }}</p>
-      <p class="gallery-price"><strong>{{ product.price }} Kč</strong></p>
+      <p class="gallery-description">{{ product.description or g.t['no_description'] }}</p>
+      <p class="gallery-price"><strong>{{ product.price }} {{ g.t['currency'] }}</strong></p>
       <p class="gallery-stock">
         {% if product.stock > 0 %}
-          <strong>Skladem: {{ product.stock }} ks</strong>
+          <strong>{{ g.t['in_stock'] }}: {{ product.stock }} {{ g.t['pieces'] }}</strong>
         {% else %}
-          <strong class="out-of-stock">Vyprodáno</strong>
+          <strong class="out-of-stock">{{ g.t['out_of_stock'] }}</strong>
         {% endif %}
       </p>
       <button class="buy-button" data-product-id="{{ product.id }}" {% if product.stock == 0 %}disabled{% endif %}>
-        🛒 Koupit
+        🛒 {{ g.t['buy_button'] }}
       </button>
     </div>
   </div>
   {% else %}
-  <p class="empty-gallery-message">Zatím zde nejsou žádné produkty.</p>
+  <p class="empty-gallery-message">{{ g.t['no_products_yet'] }}</p>
   {% endfor %}
 </div>
-
-<style>
-  .gallery-heading {
-    text-align: center;
-    font-size: 2.8rem;
-    margin-bottom: 50px;
-    color: #2c2c2c;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-
-  .gallery-container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 60px;
-    padding-bottom: 40px;
-  }
-
-  .gallery-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 50px;
-    padding: 24px;
-    border-radius: 20px;
-    background: #f8f9fa;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .gallery-item.reverse {
-    flex-direction: row-reverse;
-  }
-
-  .gallery-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-  }
-
-  .image-frame-wrapper {
-    transition: transform 0.4s ease-in-out;
-  }
-
-  .image-frame-wrapper:hover {
-    transform: scale(1.4);
-    z-index: 10;
-  }
-
-  .image-frame {
-    max-width: 500px;
-    max-height: 450px;
-    background-color: #eaeaea;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 4px solid #ccc;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .image-frame img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-  }
-
-  .gallery-info {
-    flex: 1;
-    max-width: 50%;
-    color: #333;
-  }
-
-  .gallery-info h3 {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 15px;
-  }
-
-  .gallery-description {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 20px;
-    line-height: 1.6;
-  }
-
-  .gallery-price {
-    font-size: 1.4rem;
-    color: #198754;
-    margin-bottom: 10px;
-  }
-
-  .gallery-stock {
-    font-size: 1rem;
-    margin-bottom: 15px;
-    color: #444;
-  }
-
-  .gallery-stock .out-of-stock {
-    color: #dc3545;
-  }
-
-  .buy-button {
-    background-color: #0069d9;
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .buy-button:hover {
-    background-color: #004b9c;
-  }
-
-  .buy-button[disabled] {
-    background-color: #bfbfbf;
-    cursor: not-allowed;
-  }
-
-  .empty-gallery-message {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #666;
-    margin-top: 40px;
-  }
-
-  @media (max-width: 900px) {
-    .gallery-item,
-    .gallery-item.reverse {
-      flex-direction: column;
-      text-align: center;
-    }
-
-    .gallery-info {
-      max-width: 100%;
-    }
-
-    .image-frame {
-      max-width: 100%;
-      max-height: auto;
-    }
-
-    .image-frame-wrapper:hover {
-      transform: scale(1.2); /* Menší zvětšení na mobilu */
-    }
-  }
-</style>
-
-<script src="{{ url_for('static', filename='js/cart.js') }}"></script>
 {% endblock %}

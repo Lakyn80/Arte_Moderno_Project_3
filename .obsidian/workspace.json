@@ -170,13 +170,19 @@
   },
   "active": "6d14ea88312d0fd8",
   "lastOpenFiles": [
+    "app/static/css/profil.css",
+    "app/static/translation/ru.json",
+    "app/static/translation/fr.json",
+    "app/static/translation/es.json",
+    "app/static/translation/de.json",
+    "app/static/translation/en.json",
+    "app/static/translation/cs..json",
+    "app/static/translation/cs.jason",
+    "app/static/translation",
+    "app/static/translations",
+    "app/static/css/client_reset_request.css",
     "app/static/images/ChatGPT_2.png",
-    "app/static/images/ChatGPT_2.png.crdownload",
     "app/static/images/ChatGPT_1.png",
-    "app/static/images/ChatGPT_1.png.crdownload",
-    "app/templates/profil.html",
-    "reset_client_data.py",
-    "full_reset.py",
     "app/static/uploads/ID_40_K.jpg",
     "app/static/uploads/ID_39.jpg",
     "app/static/uploads/ID_38.jpg",
@@ -185,7 +191,6 @@
     "app/static/uploads/ID_35.jpg",
     "app/static/uploads/ID_34.jpg",
     "app/static/uploads/ID_33_S.jpg",
-    "app/static/uploads/ID_32_S.jpg",
     "DEPLOYING.md"
   ]
 }

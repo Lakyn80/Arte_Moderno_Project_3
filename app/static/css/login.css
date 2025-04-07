@@ -1,0 +1,78 @@
+/* login.css */
+body {
+    background-color: #f2f3f5;
+  }
+  
+  form {
+    max-width: 400px;
+    margin: 100px auto 60px;
+    background-color: #ffffff;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  }
+  
+  label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #333;
+    margin-bottom: 6px;
+  }
+  
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 18px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease;
+  }
+  
+  input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  
+  p {
+    font-size: 0.95rem;
+    color: #444;
+    margin-top: 10px;
+  }
+  
+  p a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  p a:hover {
+    text-decoration: underline;
+  }
+  
+  @media (max-width: 500px) {
+    form {
+      padding: 20px;
+      margin: 80px 20px 40px;
+    }
+  }
+  

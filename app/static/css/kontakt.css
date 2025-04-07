@@ -1,4 +1,12 @@
 /* Kontakt – moderní design */
+.form-wrapper {
+  margin-top: 100px;
+  margin-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .contact-heading {
   font-size: 2em;
   margin-bottom: 20px;
@@ -7,10 +15,10 @@
 }
 
 .contact-form {
-  max-width: 440px;
-  margin: 30px auto;
-  padding: 20px;
+  width: 100%;
+  max-width: 500px;
   background-color: #f9f9f9;
+  padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;

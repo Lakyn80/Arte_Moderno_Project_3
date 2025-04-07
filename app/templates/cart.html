@@ -1,17 +1,20 @@
-{% extends "layout.html" %} {% block title %}Košík{% endblock %} {% block
-content %}
+{% extends "layout.html" %} {% block title %}{{ g.t['cart'] }}{% endblock %} {%
+block content %}
 <div class="cart-wrapper">
-  <h1>Váš košík</h1>
+  <h1>{{ g.t['your_cart'] }}</h1>
   <form method="POST" action="{{ url_for('cart.apply_discount') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-    <label for="discount_code">Slevový kód:</label>
+    <label for="discount_code">{{ g.t['discount_code'] }}:</label>
     <input type="text" name="discount_code" required />
-    <button type="submit">Uplatnit</button>
+    <button type="submit">{{ g.t['apply_discount'] }}</button>
 
     {% if session.discount_error %}
-    <p style="color: red">{{ session.discount_error }}</p>
+    <p style="color: red">{{ g.t['discount_error'] }}</p>
     {% elif session.discount_success %}
-    <p style="color: green">Sleva {{ session.discount_percent }}% uplatněna.</p>
+    <p style="color: green">
+      {{ g.t['discount_success'].replace('{{ percent }}',
+      session.discount_percent|string) }}
+    </p>
     {% endif %}
   </form>
 
@@ -20,12 +23,12 @@ content %}
     <table class="cart-table">
       <thead>
         <tr>
-          <th>Obrázek</th>
-          <th>Produkt</th>
-          <th>Cena za kus</th>
-          <th>Množství</th>
-          <th>Celková cena</th>
-          <th>Akce</th>
+          <th>{{ g.t['product_image'] }}</th>
+          <th>{{ g.t['product'] }}</th>
+          <th>{{ g.t['price'] }}</th>
+          <th>{{ g.t['quantity'] }}</th>
+          <th>{{ g.t['total_price'] }}</th>
+          <th>{{ g.t['action'] }}</th>
         </tr>
       </thead>
       <tbody>
@@ -42,7 +45,7 @@ content %}
             </div>
             {% else %}
             <div class="image-container no-image">
-              <span>Žádný obrázek</span>
+              <span>{{ g.t['no_image'] }}</span>
             </div>
             {% endif %}
           </td>
@@ -51,8 +54,12 @@ content %}
           <td>{{ item.quantity }}</td>
           <td>{{ item.product.price * item.quantity }} Kč</td>
           <td>
-            <button class="remove-one btn-delete">-1</button>
-            <button class="remove-all btn-delete">🗑️ Vše</button>
+            <button class="remove-one btn-delete">
+              {{ g.t['remove_one'] }}
+            </button>
+            <button class="remove-all btn-delete">
+              {{ g.t['remove_all'] }}
+            </button>
           </td>
         </tr>
         {% endfor %}
@@ -60,24 +67,26 @@ content %}
     </table>
 
     <div class="cart-summary">
-      <h2>Celkem: {{ total_price }} Kč</h2>
-      <a href="{{ url_for('views.galerie') }}" class="btn-continue"
-        >Pokračovat v nakupování</a
-      >
-      <a href="{{ url_for('checkout.checkout_summary') }}" class="btn-order"
-        >Přejít k objednávce</a
-      >
+      <h2>{{ g.t['total_price'] }}: {{ total_price }} Kč</h2>
+      <a href="{{ url_for('views.galerie') }}" class="btn-continue">
+        {{ g.t['continue_shopping'] }}
+      </a>
+      <a href="{{ url_for('checkout.checkout_summary') }}" class="btn-order">
+        {{ g.t['go_to_checkout'] }}
+      </a>
     </div>
     {% else %}
     <div class="empty-cart">
-      <p>Váš košík je prázdný.</p>
-      <a href="{{ url_for('views.galerie') }}" class="btn-continue"
-        >Přejít do galerie</a
-      >
+      <p>{{ g.t['empty_cart'] }}</p>
+      <a href="{{ url_for('views.galerie') }}" class="btn-continue">
+        {{ g.t['continue_shopping'] }}
+      </a>
     </div>
     {% endif %}
   </div>
 </div>
+
+{% endblock %}
 
 <style>
   .cart-wrapper {

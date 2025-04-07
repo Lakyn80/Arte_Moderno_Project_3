@@ -291,3 +291,11 @@ def poslat_fakturu_emailem(order_id):
     mail.send(msg)
     flash("Faktura byla odeslána na váš e-mail.", "success")
     return redirect(url_for("views.moje_objednavky"))
+
+ # ---------- MULTIJAZYČNOST ----------
+from flask import redirect, url_for, session, request
+
+@views.route("/set_language/<lang_code>")
+def set_language(lang_code):
+    session['lang'] = lang_code
+    return redirect(request.referrer or url_for('views.index'))

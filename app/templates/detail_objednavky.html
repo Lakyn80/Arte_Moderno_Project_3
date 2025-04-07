@@ -1,26 +1,27 @@
-{% extends "layout.html" %} {% block title %}Detail objednávky{% endblock %} {%
-block content %}
-
+{% extends "layout.html" %} {% block title %}{{ g.t['order_detail_title'] }}{%
+endblock %} {% block content %}
 <div class="order-detail-wrapper">
-  <h2>🧾 Detail objednávky č. {{ order.invoice_number }}</h2>
+  <h2>🧾 {{ g.t['order_detail_number'] }} {{ order.invoice_number }}</h2>
 
   <div class="order-info">
     <p>
-      <strong>📅 Datum objednávky:</strong> {{ local_time.strftime('%d.%m.%Y
-      %H:%M') }}
+      <strong>📅 {{ g.t['order_date'] }}:</strong> {{
+      local_time.strftime('%d.%m.%Y %H:%M') }}
     </p>
-    <p><strong>💰 Celková cena:</strong> {{ order.total_price }} Kč</p>
+    <p>
+      <strong>💰 {{ g.t['order_total'] }}:</strong> {{ order.total_price }} Kč
+    </p>
   </div>
 
-  <h3>📦 Seznam produktů</h3>
+  <h3>📦 {{ g.t['order_product_list'] }}</h3>
   <div class="order-table-wrapper">
     <table class="order-table">
       <thead>
         <tr>
-          <th>Produkt</th>
-          <th>Množství</th>
-          <th>Cena za kus</th>
-          <th>Mezisoučet</th>
+          <th>{{ g.t['product'] }}</th>
+          <th>{{ g.t['quantity'] }}</th>
+          <th>{{ g.t['price_per_item'] }}</th>
+          <th>{{ g.t['subtotal'] }}</th>
         </tr>
       </thead>
       <tbody>
@@ -38,11 +39,11 @@ block content %}
 
   <div class="order-addresses">
     <div>
-      <h4>📍 Dodací adresa</h4>
+      <h4>📍 {{ g.t['delivery_address'] }}</h4>
       <p>{{ order.address or '-' }}</p>
     </div>
     <div>
-      <h4>📑 Fakturační adresa</h4>
+      <h4>📑 {{ g.t['billing_address'] }}</h4>
       <p>{{ order.billing_address or '-' }}</p>
     </div>
   </div>
@@ -52,19 +53,19 @@ block content %}
       href="{{ url_for('views.stahnout_fakturu', order_id=order.id) }}"
       class="order-btn"
     >
-      ⬇ Stáhnout fakturu (PDF)
+      ⬇ {{ g.t['download_invoice'] }}
     </a>
     <a
       href="{{ url_for('views.poslat_fakturu_emailem', order_id=order.id) }}"
       class="order-btn"
     >
-      📧 Poslat fakturu e-mailem
+      📧 {{ g.t['email_invoice'] }}
     </a>
     <a
       href="{{ url_for('views.moje_objednavky') }}"
       class="order-btn secondary"
     >
-      ← Zpět na moje objednávky
+      ← {{ g.t['back_to_orders'] }}
     </a>
   </div>
 </div>

@@ -1,0 +1,83 @@
+/* register.css */
+body {
+  background-color: #f0f2f5;
+  margin: 0;
+  padding: 0;
+}
+.form-wrapper {
+  margin-top: 110px; /* Vždy stejné odsazení, i bez nadpisu */
+  margin-bottom: 60px;
+  display: flex;
+  justify-content: center;
+}
+
+form {
+  max-width: 360px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 20px 25px;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+  color: #444;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+  transition: border-color 0.2s ease;
+}
+
+input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+button[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* Zajištění vzdálenosti od spodního footeru */
+.wrapper {
+  padding-bottom: 80px;
+}
+
+@media (max-width: 500px) {
+  h1 {
+    font-size: 1.6rem;
+    margin: 60px 0 15px;
+  }
+
+  form {
+    padding: 15px 20px;
+    margin: 0 20px;
+  }
+}

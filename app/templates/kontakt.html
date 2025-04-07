@@ -1,37 +1,38 @@
-{% extends "layout.html" %} {% block title %}Kontakt{% endblock %} {% block
-content %}
-<!-- Odkaz na konkrétní CSS jen pro tuto stránku -->
+{% extends "layout.html" %} {% block title %}{{ g.t['contact_title'] }}{%
+endblock %} {% block head %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/kontakt.css') }}"
 />
+{% endblock %} {% block content %}
+<div class="form-wrapper">
+  <h1 class="contact-heading">{{ g.t['contact_heading'] }}</h1>
 
-<h1 class="contact-heading">Kontaktujte nás</h1>
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %} {% for category, message in messages %}
+  <div class="alert-{{ category }}">{{ message }}</div>
+  {% endfor %} {% endif %} {% endwith %}
 
-{% with messages = get_flashed_messages(with_categories=true) %} {% if messages
-%} {% for category, message in messages %}
-<div class="alert-{{ category }}">{{ message }}</div>
-{% endfor %} {% endif %} {% endwith %}
+  <form
+    method="POST"
+    action="{{ url_for('views.kontakt') }}"
+    class="contact-form"
+  >
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-<form
-  method="POST"
-  action="{{ url_for('views.kontakt') }}"
-  class="contact-form"
->
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <label for="name">{{ g.t['contact_name'] }}</label>
+    <input type="text" id="name" name="name" required />
 
-  <label for="name">Jméno</label>
-  <input type="text" id="name" name="name" required />
+    <label for="email">{{ g.t['contact_email'] }}</label>
+    <input type="email" id="email" name="email" required />
 
-  <label for="email">E-mail</label>
-  <input type="email" id="email" name="email" required />
+    <label for="subject">{{ g.t['contact_subject'] }}</label>
+    <input type="text" id="subject" name="subject" />
 
-  <label for="subject">Předmět</label>
-  <input type="text" id="subject" name="subject" />
+    <label for="message">{{ g.t['contact_message'] }}</label>
+    <textarea id="message" name="message" rows="6" required></textarea>
 
-  <label for="message">Zpráva</label>
-  <textarea id="message" name="message" rows="6" required></textarea>
-
-  <button type="submit">📩 Odeslat zprávu</button>
-</form>
+    <button type="submit">📩 {{ g.t['contact_send'] }}</button>
+  </form>
+</div>
 {% endblock %}

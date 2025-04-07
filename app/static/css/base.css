@@ -24,7 +24,7 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 5%;
+  padding: 1rem 2rem;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -46,6 +46,7 @@ a {
 
 .navbar-links {
   display: flex;
+  align-items: center;
   gap: 20px;
 }
 
@@ -66,6 +67,53 @@ a {
   width: 100%;
   height: 2px;
   background-color: black;
+}
+
+/* ========== LANGUAGE SWITCHER (BURGER) ========== */
+.lang-burger {
+  position: relative;
+  cursor: pointer;
+  font-size: 1.2rem;
+  user-select: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+}
+
+.lang-burger:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.lang-burger:hover .lang-menu {
+  display: block;
+}
+
+.lang-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1100;
+  min-width: 100px;
+  padding: 5px 0;
+  white-space: nowrap;
+}
+
+.lang-menu a {
+  display: block;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.lang-menu a:hover {
+  background-color: #f0f0f0;
 }
 
 /* RESPONSIVE NAVBAR */
@@ -98,13 +146,14 @@ a {
   justify-content: center;
   color: white;
   overflow: hidden;
+  margin-top: 100px;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.3);
-  z-index: 1;
+  z-index: -100;
 }
 
 .hero-text {
@@ -125,50 +174,10 @@ a {
   font-weight: 300;
 }
 
-/* ========== GALERIE ========== */
-.home-gallery-container {
-  width: 100%;
-  overflow: hidden;
-  padding: 40px 0;
-  background-color: #fff;
-}
-
-.home-gallery-flex {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  padding: 0 20px;
-}
-
-.gallery-item {
-  flex: 1 1 22%;
-  min-width: 250px;
-  max-width: 300px;
-  overflow: hidden;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  background-color: #fafafa;
-  transition: transform 0.3s ease;
-}
-
-.gallery-item img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.3s ease-in-out;
-}
-
-.gallery-item:hover img {
-  transform: scale(1.05);
-}
-
 /* ========== HLAVNÍ OBSAH ========== */
 .main-content {
   flex: 1;
   padding-top: 20px;
-  margin-top: 100px;
   text-align: center;
 }
 
@@ -195,15 +204,12 @@ a {
 .alert-success {
   background-color: #28a745;
 }
-
 .alert-error {
   background-color: #dc3545;
 }
-
 .alert-info {
   background-color: #17a2b8;
 }
-
 .alert-warning {
   background-color: #ffc107;
   color: black;
@@ -244,7 +250,6 @@ a {
   color: #666;
 }
 
-/* SOCIÁLNÍ ODKAZY */
 .social-links {
   display: flex;
   gap: 1rem;
@@ -294,7 +299,6 @@ a {
   .main-title {
     font-size: 2.2rem;
   }
-
   .subtitle {
     font-size: 1rem;
   }

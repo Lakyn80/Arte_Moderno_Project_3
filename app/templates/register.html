@@ -1,28 +1,32 @@
 {% extends "layout.html" %} {% block title %}Registrace{% endblock %} {% block
-content %}
-<h1>Registrace</h1>
-<form method="POST" action="{{ url_for('views.register') }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <!-- CSRF token -->
+head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/register.css') }}"
+/>
+{% endblock %} {% block content %}
+<div class="form-wrapper">
+  <form method="POST" action="{{ url_for('views.register') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-  <label for="username">Uživatelské jméno:</label>
-  <input type="text" name="username" id="username" required /><br /><br />
+    <label for="username">Uživatelské jméno:</label>
+    <input type="text" name="username" id="username" required />
 
-  <label for="email">E-mail:</label>
-  <input type="email" name="email" id="email" required /><br /><br />
+    <label for="email">E-mail:</label>
+    <input type="email" name="email" id="email" required />
 
-  <label for="password">Heslo:</label>
-  <input type="password" name="password" id="password" required /><br /><br />
+    <label for="password">Heslo:</label>
+    <input type="password" name="password" id="password" required />
 
-  <label for="confirm_password">Potvrzení hesla:</label>
-  <input
-    type="password"
-    name="confirm_password"
-    id="confirm_password"
-    required
-  /><br /><br />
+    <label for="confirm_password">Potvrzení hesla:</label>
+    <input
+      type="password"
+      name="confirm_password"
+      id="confirm_password"
+      required
+    />
 
-  <button type="submit">Registrovat</button>
-</form>
-
+    <button type="submit">Registrovat</button>
+  </form>
+</div>
 {% endblock %}
