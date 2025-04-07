@@ -1,0 +1,109 @@
+.order-detail-wrapper {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+}
+
+.order-detail-wrapper h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.order-info p {
+  margin-bottom: 10px;
+}
+
+.order-table-wrapper {
+  overflow-x: auto;
+}
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.order-table th,
+.order-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.order-table th {
+  background-color: #f8f8f8;
+  color: #333;
+}
+
+.order-addresses {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.order-addresses div {
+  flex: 1;
+  min-width: 250px;
+}
+
+.order-addresses h4 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+.order-btn {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.order-btn:hover {
+  background-color: #0056b3;
+}
+
+.order-btn.secondary {
+  background-color: #6c757d;
+}
+
+.order-btn.secondary:hover {
+  background-color: #5a6268;
+}
+
+@media (max-width: 600px) {
+  .order-detail-wrapper {
+    padding: 20px;
+    font-size: 15px;
+  }
+
+  .order-table th,
+  .order-table td {
+    font-size: 14px;
+  }
+
+  .order-btn {
+    width: 100%;
+  }
+
+  .order-addresses {
+    flex-direction: column;
+  }
+}

@@ -1,33 +1,45 @@
 {% extends "layout.html" %} {% block title %}Slevové kupony{% endblock %} {%
-block content %}
-
+block css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='admin/css/admin_discounts.css') }}"
+/>
+{% endblock %} {% block content %}
 <h2>Slevové kupony</h2>
 
-<form method="POST">
+<form method="POST" class="discount-form">
   {{ form.hidden_tag() }}
 
-  <label for="code">Kód:</label>
-  {{ form.code(size=32) }}
+  <div class="form-group">
+    <label for="code">Kód:</label>
+    {{ form.code(class="form-control", size=32) }}
+  </div>
 
-  <label for="discount_percent">Sleva (%):</label>
-  {{ form.discount_percent(min=1, max=100) }}
+  <div class="form-group">
+    <label for="discount_percent">Sleva (%):</label>
+    {{ form.discount_percent(class="form-control", min=1, max=100) }}
+  </div>
 
-  <label for="expires_at">Platnost do (YYYY-MM-DD):</label>
-  {{ form.expires_at() }}
+  <div class="form-group">
+    <label for="expires_at">Platnost do (YYYY-MM-DD):</label>
+    {{ form.expires_at(class="form-control") }}
+  </div>
 
-  <button type="submit">Přidat kupon</button>
+  <button type="submit" class="btn-submit">➕ Přidat kupon</button>
 </form>
 
 <h3>Existující kupony</h3>
-<ul>
+<ul class="coupon-list">
   {% for kupon in discount_codes %}
-  <li>
+  <li class="coupon-item {% if not kupon.is_active %}inactive{% endif %}">
     <strong>{{ kupon.code }}</strong> – {{ kupon.discount_percent }}% {% if
-    kupon.expires_at %} (do {{ kupon.expires_at.strftime('%d.%m.%Y') }}){% endif
-    %} {% if not kupon.is_active %} <em>[neaktivní]</em>{% endif %}
+    kupon.expires_at %}(do {{ kupon.expires_at.strftime('%d.%m.%Y') }}){% endif
+    %} {% if not kupon.is_active %}<em> [neaktivní]</em>{% endif %}
   </li>
   {% endfor %}
 </ul>
 
-<a href="{{ url_for('admin.dashboard') }}">⬅️ Zpět na dashboard</a>
+<a href="{{ url_for('admin.dashboard') }}" class="btn-back"
+  >⬅️ Zpět na dashboard</a
+>
 {% endblock %}

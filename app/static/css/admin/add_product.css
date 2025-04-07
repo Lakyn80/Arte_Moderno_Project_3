@@ -1,0 +1,50 @@
+form {
+    width: 60%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fafafa;
+  }
+
+  form label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+
+  form input[type="text"],
+  form input[type="number"],
+  form input[type="file"],
+  form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  .btn-submit {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .btn-submit:hover {
+    background-color: #218838;
+  }
+
+  .product-thumbnail {
+    margin-top: 10px;
+    width: 100px;
+    height: auto;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }

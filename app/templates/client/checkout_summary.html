@@ -1,5 +1,10 @@
 {% extends "layout.html" %} {% block title %}{{ g.t['order_summary'] }}{%
 endblock %} {% block content %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/client/checkout_summary.css') }}"
+/>
+<script src="{{ url_for('static', filename='css/client/JS/checkout_summary.js') }}"></script>
 
 <h2>🧾 {{ g.t['order_summary'] }}</h2>
 
@@ -30,12 +35,6 @@ endblock %} {% block content %}
 <form method="POST" action="{{ url_for('checkout.confirm_order') }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <input type="hidden" id="timezone" name="timezone" />
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      document.getElementById("timezone").value = tz;
-    });
-  </script>
 
   <h3>🛒 {{ g.t['your_items'] }}</h3>
   <ul>
@@ -76,139 +75,4 @@ endblock %} {% block content %}
 
 <p class="note-info">{{ g.t['confirmation_note'] }}</p>
 
-<style>
-  form {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 25px 20px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    font-family: "Segoe UI", sans-serif;
-    color: #212529;
-  }
-
-  h2,
-  h3 {
-    color: #333;
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 20px;
-  }
-
-  label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 6px;
-    margin-top: 20px;
-  }
-
-  input[type="text"],
-  textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    font-size: 1rem;
-    background-color: #fff;
-    transition: border-color 0.2s ease-in-out;
-  }
-
-  input[type="text"]:focus,
-  textarea:focus {
-    border-color: #6c757d;
-    outline: none;
-  }
-
-  ul {
-    padding-left: 25px;
-    margin-bottom: 20px;
-    list-style-type: disc;
-    color: #495057;
-  }
-
-  .btn-order {
-    padding: 12px 24px;
-    background-color: #495057;
-    color: #fff;
-    border: none;
-    font-size: 1.1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    display: block;
-    margin: 20px auto 0;
-    transition: background-color 0.2s;
-  }
-
-  .btn-order:hover {
-    background-color: #343a40;
-  }
-
-  .btn-remove-discount {
-    background-color: #adb5bd;
-    color: #212529;
-    padding: 6px 14px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-
-  .btn-remove-discount:hover {
-    background-color: #868e96;
-  }
-
-  .note-info {
-    margin-top: 30px;
-    font-size: 0.9rem;
-    color: #6c757d;
-    text-align: center;
-  }
-
-  .discount-info {
-    text-align: center;
-    background-color: #e9ecef;
-    border-left: 4px solid #adb5bd;
-    padding: 15px 20px;
-    border-radius: 6px;
-    margin-bottom: 25px;
-  }
-
-  input[name="discount_code"] {
-    width: 160px;
-    padding: 6px 10px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    font-size: 0.95rem;
-    background-color: #fff;
-    transition: border-color 0.2s ease-in-out;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-  }
-  form button[type="submit"] {
-    padding: 6px 14px;
-    font-size: 0.95rem;
-    border-radius: 4px;
-  }
-
-  hr {
-    border: none;
-    border-top: 1px solid #dee2e6;
-    margin: 30px 0;
-  }
-
-  @media (max-width: 600px) {
-    form {
-      padding: 15px;
-    }
-
-    .btn-order {
-      width: 100%;
-    }
-
-    .btn-remove-discount {
-      width: 100%;
-      margin-top: 10px;
-    }
-  }
-</style>
 {% endblock %}

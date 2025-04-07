@@ -1,6 +1,12 @@
 {% extends "layout.html" %} {% block title %}Databáze uživatelů{% endblock %} {%
-block content %}
+block css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='admin/css/admin_users.css') }}"
+/>
+{% endblock %} {% block content %}
 <h2>👤 Databáze uživatelů</h2>
+
 <table class="admin-table">
   <thead>
     <tr>

@@ -1,5 +1,10 @@
 {% extends "layout.html" %} {% block title %}Admin Login{% endblock %} {% block
-content %}
+css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/admin/admin_login.css') }}"
+/>
+{% endblock %} {% block content %}
 <h2>Přihlášení administrátora</h2>
 
 <form method="POST" action="{{ url_for('admin.admin_login') }}">
@@ -25,35 +30,4 @@ content %}
   >
 </div>
 
-<style>
-  form {
-    max-width: 400px;
-    margin: 30px auto;
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-  }
-  .form-group {
-    margin-bottom: 15px;
-  }
-  button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #0056b3;
-  }
-  a {
-    color: #007bff;
-    text-decoration: none;
-  }
-  a:hover {
-    text-decoration: underline;
-  }
-</style>
 {% endblock %}

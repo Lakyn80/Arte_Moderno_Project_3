@@ -1,5 +1,10 @@
 {% extends "layout.html" %} {% block title %}Profil zákazníka{% endblock %} {%
-block content %}
+block css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='admin/css/admin_user_detail.css') }}"
+/>
+{% endblock %} {% block content %} block content %}
 
 <div class="user-profile-wrapper">
   <h2>👤 Profil zákazníka</h2>
@@ -80,28 +85,5 @@ block content %}
     >
   </div>
 </div>
-
-<style>
-  .btn.btn-sm.btn-warning {
-    margin-left: 8px;
-    background-color: #ffc107;
-    border: none;
-    color: #212529;
-    padding: 5px 8px;
-    font-size: 12px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .btn.btn-sm.btn-success {
-    margin-left: 8px;
-    background-color: #28a745;
-    border: none;
-    color: white;
-    padding: 5px 8px;
-    font-size: 12px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-</style>
 
 {% endblock %}

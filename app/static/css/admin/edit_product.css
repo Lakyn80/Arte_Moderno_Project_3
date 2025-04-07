@@ -1,0 +1,151 @@
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #333;
+}
+
+form {
+  max-width: 600px;
+  margin: 0 auto 30px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+form label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #444;
+}
+
+form input[type="text"],
+form input[type="number"],
+form input[type="file"],
+form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: "Segoe UI", sans-serif;
+}
+
+form textarea {
+  resize: vertical;
+}
+
+form button[type="submit"] {
+  margin-top: 20px;
+  background-color: #0066cc;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+form button[type="submit"]:hover {
+  background-color: #004d99;
+}
+
+img {
+  display: block;
+  max-width: 200px;
+  width: 100%;
+  margin: 10px 0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.alert-success,
+.alert-error,
+.alert-info,
+.alert-warning {
+  max-width: 600px;
+  margin: 0 auto 15px;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+}
+
+.alert-success {
+  background-color: #28a745;
+}
+
+.alert-error {
+  background-color: #dc3545;
+}
+
+.alert-info {
+  background-color: #17a2b8;
+}
+
+.alert-warning {
+  background-color: #ffc107;
+  color: black;
+}
+
+a {
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+  color: #0066cc;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ✅ RESPONSIVITA */
+@media (max-width: 768px) {
+  form {
+    padding: 15px;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+  }
+
+  form button[type="submit"] {
+    font-size: 0.95rem;
+  }
+
+  .alert-success,
+  .alert-error,
+  .alert-info,
+  .alert-warning {
+    width: 90%;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  form {
+    padding: 10px;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  form input,
+  form textarea {
+    font-size: 0.95rem;
+  }
+
+  form button[type="submit"] {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+}

@@ -1,6 +1,12 @@
 {% extends "layout.html" %} {% block title %}Požadavky{% endblock %} {% block
-content %}
+css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='admin/css/admin_requests.css') }}"
+/>
+{% endblock %} {% block content %}
 <h2>📩 Požadavky</h2>
+
 <table class="admin-table">
   <thead>
     <tr>

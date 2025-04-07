@@ -8,13 +8,16 @@
 
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/base.css') }}"
+      href="{{ url_for('static', filename='css/base_css_section/base.css') }}"
     />
     {% block head %}{% endblock %}
   </head>
+
   <body>
+    <!-- NAVIGACE -->
     {% include "navbar.html" %}
 
+    <!-- FLASH ZPRÁVY -->
     <div class="flash-container">
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %} {% for category, message in messages %}
@@ -22,8 +25,10 @@
       {% endfor %} {% endif %} {% endwith %}
     </div>
 
+    <!-- HLAVNÍ OBSAH -->
     <main class="main-content">{% block content %}{% endblock %}</main>
 
+    <!-- PATIČKA -->
     <footer class="footer">
       <div class="footer-content">
         <p class="footer-text">© 2025 Arte Moderno. Všechna práva vyhrazena.</p>
@@ -50,39 +55,8 @@
       </div>
     </footer>
 
-    <script>
-      // Automatické skrytí flash zpráv
-      setTimeout(function () {
-        const flashMessages = document.querySelectorAll(".flash-message");
-        flashMessages.forEach((msg) => {
-          msg.style.opacity = "0";
-          setTimeout(() => msg.remove(), 500);
-        });
-      }, 5000);
-
-      // CSRF token
-      window.CSRF_TOKEN = document
-        .querySelector('meta[name="csrf-token"]')
-        .getAttribute("content");
-
-      // Jazykový burger – otevření a zavření
-      document.addEventListener("DOMContentLoaded", () => {
-        const burger = document.querySelector(".lang-burger");
-        const menu = burger?.querySelector(".lang-menu");
-
-        if (burger && menu) {
-          burger.addEventListener("click", (e) => {
-            e.stopPropagation();
-            menu.classList.toggle("show");
-          });
-
-          document.addEventListener("click", (e) => {
-            if (!burger.contains(e.target)) {
-              menu.classList.remove("show");
-            }
-          });
-        }
-      });
-    </script>
+    <!-- SCRIPTY -->
+    <script src="{{ url_for('static', filename='css/base_css_section/JS/base_js_section.js') }}"></script>
+    <script src="{{ url_for('static', filename='css/base_css_section/navbar.js') }}"></script>
   </body>
 </html>
