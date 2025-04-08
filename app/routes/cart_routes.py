@@ -29,14 +29,20 @@ def add_to_cart():
         return jsonify({'message': 'Produkt není skladem.'}), 400
 
     existing_item = CartItem.query.filter_by(user_id=current_user.id, product_id=product_id).first()
+
     if existing_item:
         if existing_item.quantity < product.stock:
             existing_item.quantity += 1
+            product.stock -= 1
         else:
             return jsonify({'message': 'Nelze přidat více kusů, než je skladem.'}), 400
     else:
         new_item = CartItem(user_id=current_user.id, product_id=product_id, quantity=1)
         db.session.add(new_item)
+        product.stock -= 1
+
+    if product.stock <= 0:
+        product.is_active = False
 
     db.session.commit()
     update_cart_count()
