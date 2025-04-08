@@ -128,4 +128,5 @@ def confirm_order():
     session.pop("discount_error", None)
 
     flash(f"Objednávka byla odeslána! Faktura č. {invoice_number}", "success")
-    return redirect(url_for("views.moje_objednavky"))
+    return redirect(url_for("orders.moje_objednavky"))
+
