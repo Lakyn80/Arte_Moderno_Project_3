@@ -9,11 +9,7 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/base_css_section/base.css') }}"
     />
-
-    {% block css %}{% endblock %}
-    <!-- 🔥 TADY JE TO DŮLEŽITÉ -->
-
-    {% block head %}{% endblock %}
+    {% block css %}{% endblock %} {% block head %}{% endblock %}
   </head>
 
   <body>
@@ -36,24 +32,21 @@
       <div class="footer-content">
         <p class="footer-text">© 2025 Arte Moderno. Všechna práva vyhrazena.</p>
         <div class="social-links">
-          <a href="#" class="social-link">
-            <img
+          <a href="#"
+            ><img
               src="{{ url_for('static', filename='logo/facebook.svg') }}"
               alt="Facebook"
-            />
-          </a>
-          <a href="#" class="social-link">
-            <img
+          /></a>
+          <a href="#"
+            ><img
               src="{{ url_for('static', filename='logo/skill-icons_instagram.svg') }}"
               alt="Instagram"
-            />
-          </a>
-          <a href="#" class="social-link">
-            <img
+          /></a>
+          <a href="#"
+            ><img
               src="{{ url_for('static', filename='logo/x.svg') }}"
               alt="Twitter/X"
-            />
-          </a>
+          /></a>
         </div>
       </div>
     </footer>

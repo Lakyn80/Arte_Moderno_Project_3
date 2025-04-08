@@ -1,11 +1,10 @@
 {% extends 'base_html_section/layout.html' %} {% block title %}{{
-g.t['home_title'] }}{% endblock %} {% block content %} {% block css %}
+g.t['home_title'] }}{% endblock %} {% block css %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/base_css_section/home.css') }}"
 />
-{% endblock %}
-
+{% endblock %} {% block content %}
 <div class="hero-section">
   <div class="hero-overlay"></div>
   <div class="hero-text">
@@ -13,5 +12,4 @@ g.t['home_title'] }}{% endblock %} {% block content %} {% block css %}
     <p class="subtitle">{{ g.t['home_subtitle'] }}</p>
   </div>
 </div>
-
 {% endblock %}
