@@ -1,15 +1,14 @@
 {% extends 'base_html_section/layout.html' %} {% block title %}{{
-g.t['home_title'] }}{% endblock %} {% block css %}
+g.t['home_title'] }}{% endblock %}
+<!-- home.html -->
+{% block css %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/base_css_section/home.css') }}"
 />
 {% endblock %} {% block content %}
-<div class="hero-section">
-  <div class="hero-overlay"></div>
-  <div class="hero-text">
-    <h1 class="main-title">{{ g.t['home_heading'] }}</h1>
-    <p class="subtitle">{{ g.t['home_subtitle'] }}</p>
-  </div>
+<div class="hero-text">
+  <h1 class="main-title">{{ g.t['home_heading'] }}</h1>
+  <p class="subtitle">{{ g.t['home_subtitle'] }}</p>
 </div>
 {% endblock %}

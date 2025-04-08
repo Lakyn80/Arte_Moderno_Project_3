@@ -1,3 +1,4 @@
+<!-- app/templates/base_html_section/layout.html -->
 <!DOCTYPE html>
 <html lang="cs">
   <head>
@@ -9,14 +10,11 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/base_css_section/base.css') }}"
     />
-    {% block css %}{% endblock %} {% block head %}{% endblock %}
+    {% block css %}{% endblock %}
   </head>
-
   <body>
-    <!-- NAVIGACE -->
     {% include "base_html_section/navbar.html" %}
 
-    <!-- FLASH ZPRÁVY -->
     <div class="flash-container">
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %} {% for category, message in messages %}
@@ -24,35 +22,36 @@
       {% endfor %} {% endif %} {% endwith %}
     </div>
 
-    <!-- HLAVNÍ OBSAH -->
     <main class="main-content">{% block content %}{% endblock %}</main>
 
-    <!-- PATIČKA -->
     <footer class="footer">
       <div class="footer-content">
         <p class="footer-text">© 2025 Arte Moderno. Všechna práva vyhrazena.</p>
         <div class="social-links">
-          <a href="#"
-            ><img
+          <a href="#" class="social-link">
+            <img
               src="{{ url_for('static', filename='logo/facebook.svg') }}"
               alt="Facebook"
-          /></a>
-          <a href="#"
-            ><img
+            />
+          </a>
+          <a href="#" class="social-link">
+            <img
               src="{{ url_for('static', filename='logo/skill-icons_instagram.svg') }}"
               alt="Instagram"
-          /></a>
-          <a href="#"
-            ><img
+            />
+          </a>
+          <a href="#" class="social-link">
+            <img
               src="{{ url_for('static', filename='logo/x.svg') }}"
               alt="Twitter/X"
-          /></a>
+            />
+          </a>
         </div>
       </div>
     </footer>
 
-    <!-- SCRIPTY -->
     <script src="{{ url_for('static', filename='css/base_css_section/JS/base_js_section.js') }}"></script>
-    <script src="{{ url_for('static', filename='css/base_css_section/navbar.js') }}"></script>
+
+    {% block scripts %}{% endblock %}
   </body>
 </html>

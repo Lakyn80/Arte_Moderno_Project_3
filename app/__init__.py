@@ -55,7 +55,7 @@ def create_app():
     app.register_blueprint(cart)
     app.register_blueprint(checkout)
     app.register_blueprint(orders)
-    app.register_blueprint(language)
+    app.register_blueprint(language, url_prefix="/language")
     app.register_blueprint(profile)
 
     # 🛒 Kontextový procesor – počet položek v košíku
@@ -69,19 +69,16 @@ def create_app():
         return dict(cart_item_count=cart_count)
 
     # 🌐 Načtení překladů z JSON
+    @app.before_request
     def load_translation():
         lang = session.get("lang", "cs")
-        translations_dir = os.path.join(os.path.dirname(__file__), "static", "translation")
-        path = os.path.join(translations_dir, f"{lang}.json")
-
+        path = os.path.join(os.path.dirname(__file__), "static", "translation", f"{lang}.json")
         try:
             with open(path, encoding="utf-8") as f:
                 content = f.read().strip()
                 g.t = json.loads(content) if content else {}
-        except (FileNotFoundError, json.JSONDecodeError):
+        except Exception as e:
+            print("Překlad se nepodařilo načíst:", e)
             g.t = {}
-
-    # 🌐 Aktivace překladů před každým requestem
-    app.before_request(load_translation)
 
     return app
