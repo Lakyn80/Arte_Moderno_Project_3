@@ -1,29 +1,89 @@
+body {
+  background: #eef1f5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
 form {
+  width: 100%;
   max-width: 400px;
-  margin: 30px auto;
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
+
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #555;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 15px;
+}
+
 button {
+  width: 100%;
+  padding: 12px;
   background-color: #007bff;
   color: white;
-  padding: 10px 15px;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  font-weight: 600;
 }
+
 button:hover {
   background-color: #0056b3;
 }
+
 a {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
   color: #007bff;
   text-decoration: none;
+  font-size: 14px;
 }
+
 a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  form {
+    padding: 20px;
+    margin: 10px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  button {
+    font-size: 15px;
+  }
 }

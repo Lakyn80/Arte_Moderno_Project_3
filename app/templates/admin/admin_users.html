@@ -1,8 +1,8 @@
-{% extends "layout.html" %} {% block title %}Databáze uživatelů{% endblock %} {%
-block css %}
+{% extends "base_html_section/layout.html" %} {% block title %}Databáze
+uživatelů{% endblock %} {% block css %}
 <link
   rel="stylesheet"
-  href="{{ url_for('static', filename='admin/css/admin_users.css') }}"
+  href="{{ url_for('static', filename='css/admin/admin_users.css') }}"
 />
 {% endblock %} {% block content %}
 <h2>👤 Databáze uživatelů</h2>
@@ -27,4 +27,6 @@ block css %}
     {% endfor %}
   </tbody>
 </table>
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='admin/js/admin_users.js') }}"></script>
 {% endblock %}

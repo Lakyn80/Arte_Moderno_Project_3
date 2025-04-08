@@ -1,61 +1,60 @@
 <nav class="navbar">
   <div class="navbar-logo">
     <a href="{{ url_for('views.home') }}">
-      <img
-        src="{{ url_for('static', filename='logo/Logo_4_svg.svg') }}"
-        alt="ArtModerno Logo"
-      />
+      <img src="{{ url_for('static', filename='logo/Logo_4_svg.svg') }}" alt="ArtModerno Logo" />
     </a>
   </div>
 
   <div class="navbar-links">
-    <a href="{{ url_for('views.home') }}" class="nav-link"
-      >{{ g.t.get("home_title", "Domů") }}</a
-    >
-    <a href="{{ url_for('views.galerie') }}" class="nav-link"
-      >{{ g.t.get("gallery_title", "Galerie") }}</a
-    >
-    <a href="{{ url_for('views.kontakt') }}" class="nav-link"
-      >{{ g.t.get("contact_title", "Kontakt") }}</a
-    >
-
-    {% if current_user.is_authenticated %} {% if current_user.role == 'admin' %}
-    <a href="{{ url_for('admin.dashboard') }}" class="nav-link">Admin panel</a>
-    {% else %}
-    <a href="{{ url_for('cart.view_cart') }}" class="nav-link cart-icon">
-      🛒 <span id="cart-count">{{ cart_item_count }}</span>
+    <a href="{{ url_for('views.home') }}" class="nav-link">
+      {{ g.t.get("home_title", "Domů") }}
     </a>
-    <a href="{{ url_for('views.moje_objednavky') }}" class="nav-link"
-      >🧾 {{ g.t.get("profile_orders", "Moje objednávky") }}</a
-    >
-    <a href="{{ url_for('views.profil') }}" class="nav-link"
-      >👤 {{ g.t.get("profile_title", "Můj profil") }}</a
-    >
-    {% endif %}
-    <a href="{{ url_for('views.logout') }}" class="nav-link"
-      >{{ g.t.get("logout", "Odhlásit se") }}</a
-    >
+    <a href="{{ url_for('views.galerie') }}" class="nav-link">
+      {{ g.t.get("gallery_title", "Galerie") }}
+    </a>
+    <a href="{{ url_for('views.kontakt') }}" class="nav-link">
+      {{ g.t.get("contact_title", "Kontakt") }}
+    </a>
+
+    {% if current_user.is_authenticated %}
+      {% if current_user.role == 'admin' %}
+        <a href="{{ url_for('admin.dashboard') }}" class="nav-link">
+          {{ g.t.get("admin_panel", "Admin panel") }}
+        </a>
+      {% else %}
+        <a href="{{ url_for('cart.view_cart') }}" class="nav-link cart-icon">
+          🛒 <span id="cart-count">{{ cart_item_count }}</span>
+        </a>
+        <a href="{{ url_for('orders.moje_objednavky') }}" class="nav-link">
+          🧾 {{ g.t.get("profile_orders", "Moje objednávky") }}
+        </a>
+        <a href="{{ url_for('profile.profil') }}" class="nav-link">
+          👤 {{ g.t.get("profile_title", "Můj profil") }}
+        </a>
+      {% endif %}
+      <a href="{{ url_for('auth_client.logout') }}" class="nav-link">
+        {{ g.t.get("logout", "Odhlásit se") }}
+      </a>
     {% else %}
-    <a href="{{ url_for('views.register') }}" class="nav-link"
-      >{{ g.t.get("register", "Registrace") }}</a
-    >
-    <a href="{{ url_for('views.login') }}" class="nav-link"
-      >{{ g.t.get("login", "Přihlášení") }}</a
-    >
+      <a href="{{ url_for('auth_client.register') }}" class="nav-link">
+        {{ g.t.get("register", "Registrace") }}
+      </a>
+      <a href="{{ url_for('auth_client.login') }}" class="nav-link">
+        {{ g.t.get("login", "Přihlášení") }}
+      </a>
     {% endif %}
 
     <!-- Přepínač jazyků -->
     <div class="lang-burger">
       🌐
       <div class="lang-menu">
-        <a href="{{ url_for('views.set_language', lang_code='cs') }}">🇨🇿</a>
-        <a href="{{ url_for('views.set_language', lang_code='en') }}">🇬🇧</a>
-        <a href="{{ url_for('views.set_language', lang_code='ru') }}">🇷🇺</a>
-        <a href="{{ url_for('views.set_language', lang_code='es') }}">🇪🇸</a>
-        <a href="{{ url_for('views.set_language', lang_code='de') }}">🇩🇪</a>
-        <a href="{{ url_for('views.set_language', lang_code='fr') }}">🇫🇷</a>
+        <a href="{{ url_for('language.set_language', lang_code='cs') }}">🇨🇿</a>
+        <a href="{{ url_for('language.set_language', lang_code='en') }}">🇬🇧</a>
+        <a href="{{ url_for('language.set_language', lang_code='ru') }}">🇷🇺</a>
+        <a href="{{ url_for('language.set_language', lang_code='es') }}">🇪🇸</a>
+        <a href="{{ url_for('language.set_language', lang_code='de') }}">🇩🇪</a>
+        <a href="{{ url_for('language.set_language', lang_code='fr') }}">🇫🇷</a>
       </div>
     </div>
-    
-    
+  </div>
 </nav>

@@ -1,5 +1,5 @@
-{% extends "layout.html" %} {% block title %}Admin Login{% endblock %} {% block
-css %}
+{% extends "base_html_section/layout.html" %} {% block title %}Admin Login{%
+endblock %} {% block css %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/admin/admin_login.css') }}"
@@ -7,7 +7,7 @@ css %}
 {% endblock %} {% block content %}
 <h2>Přihlášení administrátora</h2>
 
-<form method="POST" action="{{ url_for('admin.admin_login') }}">
+<form method="POST" action="{{ url_for('auth_admin.admin_login') }}">
   {{ form.hidden_tag() }}
 
   <div class="form-group">
@@ -25,9 +25,8 @@ css %}
 
 <!-- ✅ ODKAZ NA RESET HESLA -->
 <div style="text-align: center; margin-top: 15px">
-  <a href="{{ url_for('admin.admin_reset_request') }}"
+  <a href="{{ url_for('auth_admin.admin_reset_request') }}"
     >🔒 Zapomněli jste heslo?</a
   >
 </div>
-
 {% endblock %}

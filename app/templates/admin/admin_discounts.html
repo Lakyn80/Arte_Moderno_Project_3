@@ -1,8 +1,8 @@
-{% extends "layout.html" %} {% block title %}Slevové kupony{% endblock %} {%
-block css %}
+{% extends "base_html_section/layout.html" %} {% block title %}Slevové kupony{%
+endblock %} {% block css %}
 <link
   rel="stylesheet"
-  href="{{ url_for('static', filename='admin/css/admin_discounts.css') }}"
+  href="{{ url_for('static', filename='css/admin/admin_discounts.css') }}"
 />
 {% endblock %} {% block content %}
 <h2>Slevové kupony</h2>
@@ -33,8 +33,10 @@ block css %}
   {% for kupon in discount_codes %}
   <li class="coupon-item {% if not kupon.is_active %}inactive{% endif %}">
     <strong>{{ kupon.code }}</strong> – {{ kupon.discount_percent }}% {% if
-    kupon.expires_at %}(do {{ kupon.expires_at.strftime('%d.%m.%Y') }}){% endif
-    %} {% if not kupon.is_active %}<em> [neaktivní]</em>{% endif %}
+    kupon.expires_at %} (do {{ kupon.expires_at.strftime('%d.%m.%Y') }}) {%
+    endif %} {% if not kupon.is_active %}
+    <em> [neaktivní]</em>
+    {% endif %}
   </li>
   {% endfor %}
 </ul>

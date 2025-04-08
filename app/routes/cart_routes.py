@@ -1,17 +1,17 @@
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, flash
 from flask_login import login_required, current_user
-from app.models import Product, CartItem, DiscountCode
-from app import db
 from sqlalchemy import func
+from app import db
+from app.models import Product, CartItem, DiscountCode
 
 cart = Blueprint("cart", __name__, url_prefix="/cart")
 
-# Aktualizace počtu položek v košíku (session)
+
 def update_cart_count():
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
     session['cart_item_count'] = sum(item.quantity for item in cart_items)
 
-# Přidání produktu do košíku
+
 @cart.route('/add', methods=['POST'])
 @login_required
 def add_to_cart():
@@ -42,7 +42,7 @@ def add_to_cart():
     update_cart_count()
     return jsonify({'message': f'Produkt {product.name} byl přidán do košíku.'}), 200
 
-# Odebrání jednoho kusu produktu
+
 @cart.route('/remove_one', methods=['POST'])
 @login_required
 def remove_one_from_cart():
@@ -72,7 +72,7 @@ def remove_one_from_cart():
     update_cart_count()
     return jsonify({"message": "Odebrán jeden kus produktu z košíku."}), 200
 
-# Odebrání všech kusů produktu
+
 @cart.route('/remove_all', methods=['POST'])
 @login_required
 def remove_all_from_cart():
@@ -99,7 +99,7 @@ def remove_all_from_cart():
 
     return jsonify({"message": "Celý produkt byl odebrán z košíku."}), 200
 
-# Zobrazení košíku (s aplikovanou slevou)
+
 @cart.route('/view', methods=['GET'])
 @login_required
 def view_cart():
@@ -115,9 +115,9 @@ def view_cart():
     if discount_percent:
         total_price = total_price * (1 - discount_percent / 100)
 
-    return render_template("cart.html", cart_items=cart_items, total_price=round(total_price, 2))
+    return render_template("client/cart.html", cart_items=cart_items, total_price=round(total_price, 2))
 
-# Aplikace slevového kódu
+
 @cart.route('/apply_discount', methods=['POST'])
 @login_required
 def apply_discount():
@@ -137,7 +137,7 @@ def apply_discount():
 
     return redirect(url_for('cart.view_cart'))
 
-# Počet položek v košíku
+
 @cart.route('/count', methods=['GET'])
 @login_required
 def cart_count():

@@ -1,8 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from app.models import Product, CartItem
-from app.extensions import db
-
+from app import db
 
 api_cart = Blueprint("api_cart", __name__, url_prefix="/api/cart")
 
@@ -10,7 +9,6 @@ api_cart = Blueprint("api_cart", __name__, url_prefix="/api/cart")
 @api_cart.route("/add", methods=["POST"])
 @login_required
 def api_add_to_cart():
-    from app import db  # <- TADY uvnitř funkce
     data = request.get_json()
     product_id = data.get("product_id")
 
@@ -35,7 +33,6 @@ def api_add_to_cart():
 @api_cart.route("/remove", methods=["POST"])
 @login_required
 def api_remove_from_cart():
-    from app import db  # <- TADY
     data = request.get_json()
     product_id = data.get("product_id")
 

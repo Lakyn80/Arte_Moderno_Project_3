@@ -1,16 +1,15 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from flask_login import login_required, current_user
 from flask_mail import Message
-from datetime import datetime
-from pytz import timezone
 from app.utils import generate_invoice_number
 from app import db, mail
 from app.models import CartItem, Product, Order, OrderItem
 
-checkout = Blueprint("checkout", __name__, url_prefix="/checkout")
+checkout = Blueprint("checkout", __name__)
+
 
 # ---------- Rekapitulace objednávky ----------
-@checkout.route("/summary", methods=["GET"])
+@checkout.route("/checkout/summary", methods=["GET"])
 @login_required
 def checkout_summary():
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
@@ -28,7 +27,7 @@ def checkout_summary():
         total_price -= discount_amount
 
     return render_template(
-        "checkout_summary.html",
+        "client/checkout_summary.html",
         cart_items=cart_items,
         total_price=round(total_price, 2),
         discount_percent=discount_percent,
@@ -37,7 +36,7 @@ def checkout_summary():
 
 
 # ---------- Potvrzení objednávky ----------
-@checkout.route("/confirm", methods=["POST"])
+@checkout.route("/checkout/confirm", methods=["POST"])
 @login_required
 def confirm_order():
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
@@ -48,6 +47,7 @@ def confirm_order():
     address = request.form.get("address")
     billing_address = request.form.get("billing_address")
     timezone_client = request.form.get("timezone")
+
     total_price = sum(item.product.price * item.quantity for item in cart_items)
 
     # Sleva (znovu aplikuj pro jistotu)
@@ -78,10 +78,12 @@ def confirm_order():
             price_per_item=item.product.price
         )
         db.session.add(order_item)
+
         item.product.stock -= item.quantity
         if item.product.stock <= 0:
             item.product.is_active = False
 
+    # Smazání položek z košíku
     db.session.query(CartItem).filter_by(user_id=current_user.id).delete()
 
     try:
@@ -92,7 +94,7 @@ def confirm_order():
         print("Chyba při ukládání objednávky:", e)
         return redirect(url_for("cart.view_cart"))
 
-    # ✅ 3. E-maily
+    # ✅ 3. Odeslání e-mailů
     try:
         msg_body = f"Nová objednávka č. {invoice_number}\n"
         msg_body += f"Zákazník: {current_user.username} ({current_user.email})\n"
@@ -120,7 +122,7 @@ def confirm_order():
     except Exception as e:
         print("Chyba při odesílání e-mailu:", e)
 
-    # Po odeslání objednávky smažeme slevu
+    # ✅ 4. Vyčištění session od slev
     session.pop("discount_percent", None)
     session.pop("discount_success", None)
     session.pop("discount_error", None)

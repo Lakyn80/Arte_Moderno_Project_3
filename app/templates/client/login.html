@@ -1,11 +1,15 @@
-{% extends "layout.html" %} {% block title %}{{ g.t['login_title'] }}{% endblock
-%} {% block head %}
+{% extends "base_html_section/layout.html" %} {% block title %}{{
+g.t['login_title'] }}{% endblock %} {% block head %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/client/login.css') }}"
 />
 {% endblock %} {% block content %}
-<form method="POST" action="{{ url_for('views.login') }}" class="login-form">
+<form
+  method="POST"
+  action="{{ url_for('auth_client.login') }}"
+  class="login-form"
+>
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
   <label for="email">{{ g.t['login_email'] }}:</label>
@@ -17,14 +21,16 @@
   <button type="submit">{{ g.t['login_button'] }}</button><br /><br />
 
   <p style="text-align: center">
-    <a href="{{ url_for('views.client_reset_request') }}"
-      >{{ g.t['login_forgot_password'] }}</a
-    >
+    <a href="{{ url_for('auth_client.client_reset_request') }}">
+      {{ g.t['login_forgot_password'] }}
+    </a>
   </p>
 
   <p>
     {{ g.t['login_no_account'] }}
-    <a href="{{ url_for('views.register') }}">{{ g.t['login_register'] }}</a>.
+    <a href="{{ url_for('auth_client.register') }}"
+      >{{ g.t['login_register'] }}</a
+    >.
   </p>
 </form>
 {% endblock %}

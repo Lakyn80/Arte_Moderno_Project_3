@@ -55,13 +55,20 @@ form button[type="submit"]:hover {
   background-color: #004d99;
 }
 
-img {
+/* ✅ Náhled obrázku */
+#preview-container img {
   display: block;
   max-width: 200px;
   width: 100%;
   margin: 10px 0;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ Checkbox na smazání obrázku */
+input[type="checkbox"] {
+  margin-right: 5px;
+  transform: scale(1.2);
 }
 
 .alert-success,
@@ -147,5 +154,9 @@ a:hover {
   form button[type="submit"] {
     font-size: 0.9rem;
     padding: 8px 16px;
+  }
+
+  #preview-container img {
+    max-width: 100%;
   }
 }

@@ -1,20 +1,19 @@
-from flask import Flask, g, session
+from flask import Flask, g, session, current_app
 from flask_login import current_user
 import json
-import os  # Pro práci s cestami
+import os
 
-# Import rozšíření (pouze import z extensions)
+# 🔌 Rozšíření
 from app.extensions import db, mail, bcrypt, login_manager, csrf, migrate
 
-# Import API blueprintů (musí být až po extensions!)
-from app.views.api_cart import api_cart
-
+# 🧠 API blueprinty (musí být až po extensions)
+from app.routes.cart_api_routes import api_cart
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object('app.config.Config')
 
-    # Inicializace rozšíření
+    # ✅ Inicializace rozšíření
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
@@ -22,34 +21,44 @@ def create_app():
     login_manager.init_app(app)
     csrf.init_app(app)
 
-    # Nastavení LoginManageru
-    login_manager.login_view = "views.login"
+    # 🔐 Login Manager – přihlášení pro klienty
+    login_manager.login_view = "auth_client.login"
     login_manager.login_message_category = "info"
 
-    # Načtení modelů (musí být po init_app)
+    # 🧠 Načtení modelů
     from app.models import User, CartItem
 
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    # CLI příkazy
+    # 🛠️ CLI příkazy
     from app.commands import register_commands
     register_commands(app)
 
-    # Import a registrace blueprintů
-    from app.views.routes import views
-    from app.views.admin_routes import admin
-    from app.views.cart_routes import cart
-    from app.views.checkout_routes import checkout
+    # 🧩 Import a registrace všech blueprintů
+    from app.routes.views_routes import views
+    from app.routes.auth_admin_routes import auth_admin
+    from app.routes.auth_client_routes import auth_client
+    from app.routes.admin_routes import admin
+    from app.routes.cart_routes import cart
+    from app.routes.checkout_routes import checkout 
+    from app.routes.orders_routes import orders
+    from app.routes.language_routes import language
+    from app.routes.profile_routes import profile
 
     app.register_blueprint(api_cart, url_prefix="/api/cart")
     app.register_blueprint(views)
+    app.register_blueprint(auth_admin)
+    app.register_blueprint(auth_client)
     app.register_blueprint(admin, url_prefix="/admin")
     app.register_blueprint(cart)
     app.register_blueprint(checkout)
+    app.register_blueprint(orders)
+    app.register_blueprint(language)
+    app.register_blueprint(profile)
 
-    # Kontextový procesor – zobrazování počtu v košíku
+    # 🛒 Kontextový procesor – počet položek v košíku
     @app.context_processor
     def inject_cart_count():
         if current_user.is_authenticated:
@@ -59,7 +68,7 @@ def create_app():
             cart_count = 0
         return dict(cart_item_count=cart_count)
 
-    # Načtení překladů z JSON – spolehlivě i s fallbackem
+    # 🌐 Načtení překladů z JSON
     def load_translation():
         lang = session.get("lang", "cs")
         translations_dir = os.path.join(os.path.dirname(__file__), "static", "translation")
@@ -72,7 +81,7 @@ def create_app():
         except (FileNotFoundError, json.JSONDecodeError):
             g.t = {}
 
-    # Aktivace překladu před každým requestem
+    # 🌐 Aktivace překladů před každým requestem
     app.before_request(load_translation)
 
     return app

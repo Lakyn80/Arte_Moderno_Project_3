@@ -1,5 +1,11 @@
-{% extends "layout.html" %} {% block title %}Detail objednávky{% endblock %} {%
-block content %}
+{% extends "base_html_section/layout.html" %}
+{% block title %}Detail objednávky{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_order_detail.css') }}">
+{% endblock %}
+
+{% block content %}
 
 <div class="order-detail-wrapper">
   <h2>📄 Detail objednávky</h2>
@@ -9,20 +15,16 @@ block content %}
       <strong>Číslo objednávky:</strong> {{ order.order_number or order.id }}
     </p>
     <p>
-      <strong>Datum vytvoření:</strong> {{ order.created_at.strftime('%d.%m.%Y
-      %H:%M') }}
+      <strong>Datum vytvoření:</strong> {{ order.created_at.strftime('%d.%m.%Y %H:%M') }}
     </p>
     <p>
       <strong>Celková cena:</strong> {{ "%.2f"|format(order.total_price) }} Kč
     </p>
 
     <h4>📝 Změna stavu objednávky</h4>
-    <form
-      method="POST"
-      action="{{ url_for('admin.update_order_status', order_id=order.id) }}"
-      class="status-form"
-    >
-      {{ status_form.hidden_tag() }} {{ status_form.status.label }}<br />
+    <form method="POST" action="{{ url_for('admin.update_order_status', order_id=order.id) }}" class="status-form">
+      {{ status_form.hidden_tag() }}
+      {{ status_form.status.label }}<br />
       {{ status_form.status(class="status-select") }}<br />
       {{ status_form.submit(class="status-submit") }}
     </form>
@@ -31,10 +33,7 @@ block content %}
   <hr />
 
   <h3>🧍‍♂️ Informace o zákazníkovi</h3>
-  <p>
-    <strong>Jméno:</strong> {{ order.user.first_name }} {{ order.user.last_name
-    }}
-  </p>
+  <p><strong>Jméno:</strong> {{ order.user.first_name }} {{ order.user.last_name }}</p>
   <p><strong>Email:</strong> {{ order.user.email }}</p>
   <p><strong>Telefon:</strong> {{ order.user.phone or "-" }}</p>
 
@@ -71,20 +70,15 @@ block content %}
   <hr />
 
   <h3>📝 Poznámka k objednávce</h3>
-  <form
-    method="POST"
-    action="{{ url_for('admin.update_order_note', order_id=order.id) }}"
-    class="note-form"
-  >
-    {{ note_form.hidden_tag() }} {{ note_form.note.label }}<br />
+  <form method="POST" action="{{ url_for('admin.update_order_note', order_id=order.id) }}" class="note-form">
+    {{ note_form.hidden_tag() }}
+    {{ note_form.note.label }}<br />
     {{ note_form.note(rows=4, cols=80) }}<br />
     {{ note_form.submit(class="note-submit") }}
   </form>
 
   <div class="back-button">
-    <a href="{{ url_for('admin.admin_orders') }}"
-      >⬅️ Zpět na přehled objednávek</a
-    >
+    <a href="{{ url_for('admin.admin_orders') }}">⬅️ Zpět na přehled objednávek</a>
   </div>
 </div>
 

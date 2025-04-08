@@ -3,6 +3,7 @@ from wtforms import StringField, TextAreaField, SubmitField, PasswordField
 from wtforms.validators import Optional, DataRequired, Email, EqualTo, Length, ValidationError
 from datetime import datetime
 
+# ✅ Validátor pro datum narození
 def validate_past_date(form, field):
     if not field.data:
         return
@@ -13,7 +14,9 @@ def validate_past_date(form, field):
     except ValueError:
         raise ValidationError("Neplatný formát data (očekáváno: RRRR-MM-DD).")
 
+# ✅ FORMULÁŘ PROFILU
 class ProfileForm(FlaskForm):
+    username = StringField("Uživatelské jméno", validators=[Optional()])
     first_name = StringField("Jméno", validators=[Optional()])
     last_name = StringField("Příjmení", validators=[Optional()])
     phone = StringField("Telefon", validators=[Optional()])
@@ -29,15 +32,18 @@ class ProfileForm(FlaskForm):
     date_of_birth = StringField("Datum narození", validators=[Optional(), validate_past_date])
     submit = SubmitField("Uložit profil")
 
+# ✅ RESET HESLA – ŽÁDOST
 class ClientResetRequestForm(FlaskForm):
     email = StringField("E-mail", validators=[DataRequired(), Email()])
     submit = SubmitField("Odeslat odkaz pro obnovu hesla")
 
+# ✅ RESET HESLA – FORMULÁŘ
 class ClientResetPasswordForm(FlaskForm):
     new_password = PasswordField("Nové heslo", validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField("Potvrdit nové heslo", validators=[DataRequired(), EqualTo("new_password")])
     submit = SubmitField("Změnit heslo")
 
+# ✅ KONTAKTNÍ FORMULÁŘ
 class ContactForm(FlaskForm):
     name = StringField("Jméno", validators=[DataRequired()])
     email = StringField("E-mail", validators=[DataRequired(), Email()])

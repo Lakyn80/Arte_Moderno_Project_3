@@ -3,19 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-
     <title>ArtModerno | {% block title %}{% endblock %}</title>
 
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/base_css_section/base.css') }}"
     />
+
+    {% block css %}{% endblock %}
+    <!-- 🔥 TADY JE TO DŮLEŽITÉ -->
+
     {% block head %}{% endblock %}
   </head>
 
   <body>
     <!-- NAVIGACE -->
-    {% include "navbar.html" %}
+    {% include "base_html_section/navbar.html" %}
 
     <!-- FLASH ZPRÁVY -->
     <div class="flash-container">

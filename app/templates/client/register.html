@@ -1,17 +1,17 @@
-{% extends "layout.html" %} {% block title %}{{ g.t.get("register",
-"Registrace") }}{% endblock %} {% block head %}
+{% extends "base_html_section/layout.html" %} {% block title %}{{
+g.t.get("register", "Registrace") }}{% endblock %} {% block head %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/client/register.css') }}"
 />
 {% endblock %} {% block content %}
 <div class="form-wrapper">
-  <form method="POST" action="{{ url_for('views.register') }}">
+  <form method="POST" action="{{ url_for('auth_client.register') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-    <label for="username"
-      >{{ g.t.get("username", "Uživatelské jméno") }}:</label
-    >
+    <label for="username">
+      {{ g.t.get("username", "Uživatelské jméno") }}:
+    </label>
     <input type="text" name="username" id="username" required />
 
     <label for="email">{{ g.t.get("email", "E-mail") }}:</label>
@@ -20,9 +20,9 @@
     <label for="password">{{ g.t.get("password", "Heslo") }}:</label>
     <input type="password" name="password" id="password" required />
 
-    <label for="confirm_password"
-      >{{ g.t.get("confirm_password", "Potvrzení hesla") }}:</label
-    >
+    <label for="confirm_password">
+      {{ g.t.get("confirm_password", "Potvrzení hesla") }}:
+    </label>
     <input
       type="password"
       name="confirm_password"

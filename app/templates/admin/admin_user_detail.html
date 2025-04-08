@@ -1,11 +1,10 @@
-{% extends "layout.html" %} {% block title %}Profil zákazníka{% endblock %} {%
-block css %}
+{% extends "base_html_section/layout.html" %} {% block title %}Profil
+zákazníka{% endblock %} {% block css %}
 <link
   rel="stylesheet"
-  href="{{ url_for('static', filename='admin/css/admin_user_detail.css') }}"
+  href="{{ url_for('static', filename='css/admin/admin_user_detail.css') }}"
 />
-{% endblock %} {% block content %} block content %}
-
+{% endblock %} {% block content %}
 <div class="user-profile-wrapper">
   <h2>👤 Profil zákazníka</h2>
 
@@ -49,7 +48,7 @@ block css %}
           <form
             method="POST"
             action="{{ url_for('admin.hide_order_from_user', order_id=order.id) }}"
-            style="display: inline"
+            class="inline-form"
           >
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <button type="submit" class="btn btn-sm btn-warning">
@@ -61,10 +60,14 @@ block css %}
           <form
             method="POST"
             action="{{ url_for('admin.restore_order_for_user', order_id=order.id) }}"
-            style="display: inline"
+            class="inline-form"
           >
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <button type="submit" class="btn btn-sm btn-success">
+            <button
+              type="submit"
+              class="btn btn-sm btn-success"
+              onclick="return confirm('Obnovit viditelnost této objednávky pro klienta?')"
+            >
               🔁 Obnovit
             </button>
           </form>
@@ -85,5 +88,6 @@ block css %}
     >
   </div>
 </div>
-
+{% block scripts %}
+<script src="{{ url_for('static', filename='admin/js/admin_user_detail.js') }}"></script>
 {% endblock %}

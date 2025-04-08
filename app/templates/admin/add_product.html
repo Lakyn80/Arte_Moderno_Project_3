@@ -1,22 +1,18 @@
-{% extends "layout.html" %} {% block title %}{{ 'Upravit produkt' if product
-else 'Přidat produkt' }}{% endblock %} {% block css %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/admin/add_product.css') }}"
-/>
-{% endblock %} {% block css %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/admin/add_product.css') }}"
-/>
-{% endblock %} {% block content %}
+{% extends "base_html_section/layout.html" %}
+{% block title %}{{ 'Upravit produkt' if product else 'Přidat produkt' }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/add_product.css') }}">
+{% endblock %}
+
+{% block content %}
 <h2>{{ 'Upravit produkt' if product else 'Přidat nový produkt' }}</h2>
 
 <form method="POST" enctype="multipart/form-data">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
   <label for="position_id">ID pozice:</label>
-  <input
+  <input 
     type="number"
     name="position_id"
     id="position_id"
@@ -54,9 +50,7 @@ else 'Přidat produkt' }}{% endblock %} {% block css %}
   /><br /><br />
 
   <label for="description">Popis:</label><br />
-  <textarea name="description" id="description" rows="4">
-{{ product.description if product else '' }}</textarea
-  ><br /><br />
+  <textarea name="description" id="description" rows="4">{{ product.description if product else '' }}</textarea><br /><br />
 
   <label for="image">Obrázek produktu:</label>
   <input type="file" name="image" id="image" accept="image/*" /><br /><br />
@@ -78,5 +72,4 @@ else 'Přidat produkt' }}{% endblock %} {% block css %}
 <a href="{{ url_for('admin.dashboard') }}">
   <button>⬅️ Zpět na admin panel</button>
 </a>
-
 {% endblock %}

@@ -1,5 +1,5 @@
-{% extends "layout.html" %} {% block title %}Objednávky{% endblock %} {% block
-css %}
+{% extends "base_html_section/layout.html" %} {% block title %}Objednávky{%
+endblock %} {% block css %}
 <link
   rel="stylesheet"
   href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
@@ -10,13 +10,12 @@ css %}
 />
 <link
   rel="stylesheet"
-  href="{{ url_for('static', filename='admin/css/admin_orders.css') }}"
+  href="{{ url_for('static', filename='css/admin/admin_orders.css') }}"
 />
 {% endblock %} {% block content %}
 <h2>📋 Přehled objednávek</h2>
 
 <div class="orders-wrapper">
-  <!-- 🔍 Filtrovací formulář -->
   <form method="GET" class="filter-form">
     <input
       type="text"
@@ -29,7 +28,6 @@ css %}
     <button type="submit">Filtrovat</button>
   </form>
 
-  <!-- 📊 Tabulka objednávek -->
   <table class="admin-table display" id="orders-table">
     <thead>
       <tr>
@@ -62,9 +60,9 @@ css %}
       <tr>
         <td>{{ order.invoice_number or "-" }}</td>
         <td>
-          <a href="{{ url_for('admin.order_detail', order_id=order.id) }}"
-            >{{ order.order_number or order.id }}</a
-          >
+          <a href="{{ url_for('admin.order_detail', order_id=order.id) }}">
+            {{ order.order_number or order.id }}
+          </a>
         </td>
         <td>
           <a href="{{ url_for('admin.user_detail', user_id=order.user.id) }}">
@@ -101,13 +99,5 @@ css %}
   </table>
 </div>
 {% endblock %} {% block scripts %}
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
 <script src="{{ url_for('static', filename='admin/js/admin_orders.js') }}"></script>
 {% endblock %}

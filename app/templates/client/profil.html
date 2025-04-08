@@ -1,97 +1,87 @@
-{% extends "layout.html" %} {% block title %}{{ g.t['profile_title'] }}{%
-endblock %} {% block head %}
+{% extends "base_html_section/layout.html" %} {% block title %}{{
+g.t["profile_title"] }}{% endblock %} {% block content %}
+
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/client/profil.css') }}"
 />
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
-/>
-{% endblock %} {% block content %}
-<div class="profile-wrapper">
-  <h2 class="profile-heading">👤 {{ g.t['profile_heading'] }}</h2>
 
-  {% with messages = get_flashed_messages(with_categories=true) %} {% for
-  category, message in messages %}
-  <div class="flash flash-{{ category }}">{{ message }}</div>
-  {% endfor %} {% endwith %}
+<h2 class="profile-heading">👤 {{ g.t["profile_title"] }}</h2>
 
-  <form method="POST" class="profile-form">
-    {{ form.hidden_tag() }}
+<form method="POST" class="profile-form" autocomplete="off">
+  {{ form.hidden_tag() }}
 
-    <div class="form-group">
-      <label>{{ g.t['profile_email'] }}</label>
-      <input
-        type="email"
-        value="{{ current_user.email }}"
-        readonly
-        class="readonly-input"
-      />
-    </div>
-
-    {% for fieldname in ['first_name', 'last_name', 'phone', 'address',
-    'billing_address', 'city', 'postal_code', 'country', 'company',
-    'company_id', 'vat_id', 'note'] %} {% if form[fieldname] %}
-    <div class="form-group">
-      <label>{{ form[fieldname].label }}</label>
-      {{ form[fieldname](class="form-control") }} {% for error in
-      form[fieldname].errors %}
-      <small class="text-danger">{{ error }}</small>
-      {% endfor %}
-    </div>
-    {% endif %} {% endfor %}
-
-    <div class="form-group">
-      <label>{{ form.date_of_birth.label }}</label>
-      {{ form.date_of_birth(class="form-control", id="datepicker") }} {% for
-      error in form.date_of_birth.errors %}
-      <small class="text-danger">{{ error }}</small>
-      {% endfor %}
-    </div>
-
-    <div class="form-actions">{{ form.submit(class="btn-order") }}</div>
-  </form>
-
-  <div class="profile-card">
-    <h3>💳 {{ g.t['profile_card'] }}</h3>
-    <p>
-      <strong
-        >{{ current_user.first_name }} {{ current_user.last_name }}</strong
-      >
-    </p>
-    <p>{{ current_user.email }}</p>
-    <p>{{ current_user.phone }}</p>
-    <p>
-      {{ current_user.address }}, {{ current_user.city }}, {{
-      current_user.postal_code }}
-    </p>
-    <p>{{ current_user.country }}</p>
-
-    {% if birthdate %} {% set today = namespace(value=datetime.utcnow()) %} {%
-    set age = today.value.year - birthdate.year - ((today.value.month,
-    today.value.day) < (birthdate.month, birthdate.day)) %}
-    <p>
-      🗓️ <strong>{{ g.t['profile_birthdate'] }}:</strong> {{
-      birthdate.strftime('%d.%m.%Y') }} ({{ age }} {{ g.t['profile_years'] }})
-    </p>
-    {% endif %} {% if current_user.company %}
-    <p>
-      <strong>{{ g.t['profile_company'] }}:</strong> {{ current_user.company }}
-      (IČO: {{ current_user.company_id }}, DIČ: {{ current_user.vat_id }})
-    </p>
-    {% endif %} {% if current_user.note %}
-    <p><em>{{ g.t['profile_note'] }}:</em> {{ current_user.note }}</p>
-    {% endif %}
+  <div class="form-group">
+    <label for="email">📧 E-mail</label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      value="{{ current_user.email }}"
+      class="form-control"
+      disabled
+    />
   </div>
 
-  <div class="profile-links">
-    <a href="{{ url_for('views.moje_objednavky') }}" class="btn-order"
-      >📦 {{ g.t['profile_orders'] }}</a
-    >
+  <div class="form-group">
+    {{ form.first_name.label }} {{ form.first_name(class_="form-control") }}
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="{{ url_for('static', filename='css/client/JS/profil.js') }}"></script>
+  <div class="form-group">
+    {{ form.last_name.label }} {{ form.last_name(class_="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ form.phone.label }} {{ form.phone(class_="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ form.address.label }} {{ form.address(class_="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ form.billing_address.label }} {{
+    form.billing_address(class_="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ form.city.label }} {{ form.city(class_="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ form.postal_code.label }} {{ form.postal_code(class_="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ form.country.label }} {{ form.country(class_="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ form.company.label }} {{ form.company(class_="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ form.company_id.label }} {{ form.company_id(class_="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ form.vat_id.label }} {{ form.vat_id(class_="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ form.note.label }} {{ form.note(class_="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ form.date_of_birth.label }} {{ form.date_of_birth(class_="form-control",
+    value=(birthdate.strftime('%Y-%m-%d') if birthdate else '')) }}
+  </div>
+
+  <button type="submit" class="btn-save">💾 {{ g.t["save_changes"] }}</button>
+</form>
+
+<a href="{{ url_for('orders.moje_objednavky') }}" class="btn-order">
+  🧾 {{ g.t["profile_orders"] }}
+</a>
+
 {% endblock %}

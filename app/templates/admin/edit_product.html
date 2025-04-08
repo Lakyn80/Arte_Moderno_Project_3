@@ -1,11 +1,11 @@
-{% extends "layout.html" %} {% block title %}Upravit produkt{% endblock %} {%
-block content %}
+{% extends "base_html_section/layout.html" %} {% block title %}Upravit produkt{%
+endblock %} {% block css %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/admin/edit_product.css') }}"
 />
-
-<h2>Upravit produkt</h2>
+{% endblock %} {% block content %}
+<h2>📝 Upravit produkt</h2>
 
 <!-- Flash zprávy -->
 {% with messages = get_flashed_messages(with_categories=true) %} {% if messages
@@ -17,14 +17,15 @@ block content %}
 </ul>
 {% endif %} {% endwith %}
 
-<!-- Formulář pro úpravu produktu -->
+<!-- Formulář -->
 <form
   method="POST"
   action="{{ url_for('admin.edit_product', product_id=product.id) }}"
   enctype="multipart/form-data"
+  id="editProductForm"
 >
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <!-- CSRF token -->
+
   <label for="position_id">ID pozice:</label>
   <input
     type="number"
@@ -67,26 +68,27 @@ block content %}
 {{ product.description }}</textarea
   ><br /><br />
 
-  <!-- Zobrazení aktuálního obrázku -->
   {% if product.image_filename %}
   <p>Aktuální obrázek:</p>
   <img
     src="{{ product.get_image_url() }}"
     alt="{{ product.name }}"
+    class="product-thumbnail"
     style="max-width: 200px"
   /><br /><br />
-
-  <!-- Možnost smazat obrázek -->
-  <input type="checkbox" name="delete_image" id="delete_image" />
-  <label for="delete_image">Smazat aktuální obrázek</label><br /><br />
   {% endif %}
 
-  <!-- Nahrání nového obrázku -->
   <label for="image">Nahrát nový obrázek:</label>
   <input type="file" name="image" id="image" accept="image/*" /><br /><br />
 
-  <button type="submit">Uložit změny</button>
+  <!-- Náhled obrázku -->
+  <div id="preview-container" style="margin-bottom: 15px"></div>
+
+  <button type="submit">💾 Uložit změny</button>
 </form>
 
-<a href="{{ url_for('admin.dashboard') }}">⬅️ Zpět na dashboard</a>
+<br />
+<a href="{{ url_for('admin.dashboard') }}">⬅️ Zpět na admin panel</a>
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='admin/js/edit_product.js') }}"></script>
 {% endblock %}
