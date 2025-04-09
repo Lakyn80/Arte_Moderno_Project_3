@@ -5,10 +5,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>ArtModerno | {% block title %}{% endblock %}</title>
 
-    <!-- ZÁKLADNÍ STYLY: POUZE NAVBAR + FOOTER -->
+    <!-- ZÁKLADNÍ STYLY: POUZE CLIENT NAVBAR + FOOTER -->
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/base_css_section/navbar.css') }}"
+      href="{{ url_for('static', filename='css/base_css_section/base.css') }}"
     />
     <link
       rel="stylesheet"
@@ -20,8 +20,8 @@
   </head>
 
   <body>
-    <!-- NAVIGACE -->
-    {% include "base_html_section/navbar.html" %}
+    <!-- CLIENT NAVBAR -->
+    {% include "base_html_section/client_navbar.html" %}
 
     <!-- FLASH ZPRÁVY -->
     <div class="flash-container">

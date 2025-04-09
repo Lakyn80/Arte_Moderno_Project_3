@@ -24,7 +24,7 @@ a {
   color: inherit;
 }
 
-/* ========== NAVBAR ========== */
+/* ========== CLIENT NAVBAR ========== */
 .navbar {
   display: flex;
   justify-content: space-between;
