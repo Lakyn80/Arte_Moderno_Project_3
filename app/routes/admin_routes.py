@@ -389,3 +389,10 @@ def hide_order_from_user(order_id):
     db.session.commit()
     flash("Objednávka byla skryta z profilu klienta.", "info")
     return redirect(url_for("admin.user_detail", user_id=order.user_id))
+
+# 📋 Přehled všech uživatelů
+@admin.route("/users")
+@admin_required
+def users():
+    users = User.query.order_by(User.created_at.desc()).all()
+    return render_template("admin/admin_users.html", users=users)

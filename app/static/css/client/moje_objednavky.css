@@ -33,6 +33,7 @@
   align-items: center;
   margin-bottom: 10px;
   flex-wrap: wrap;
+  gap: 10px;
 }
 
 .order-date {
@@ -49,18 +50,19 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .btn-order {
   display: inline-block;
   background-color: #0066cc;
   color: white;
-  padding: 8px 14px;
+  padding: 10px 16px;
   font-size: 0.95rem;
   border-radius: 6px;
   text-decoration: none;
   transition: background-color 0.3s ease;
+  white-space: nowrap;
 }
 
 .btn-order:hover {
@@ -83,12 +85,11 @@
   .order-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
   }
 
   .btn-order {
     font-size: 0.9rem;
-    padding: 8px 12px;
+    padding: 9px 14px;
   }
 }
 
@@ -108,6 +109,6 @@
 
   .order-actions {
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
 }

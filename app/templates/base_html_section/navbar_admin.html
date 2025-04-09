@@ -1,0 +1,20 @@
+<nav class="navbar admin-navbar">
+  <div class="navbar-logo">
+    <a href="{{ url_for('admin.dashboard') }}">
+      <img
+        src="{{ url_for('static', filename='logo/Logo_4_svg.svg') }}"
+        alt="Admin Dashboard"
+      />
+    </a>
+  </div>
+
+  <div class="navbar-links">
+    <a href="{{ url_for('admin.dashboard') }}">📊 Dashboard</a>
+    <a href="{{ url_for('admin.add_product') }}">🖼️ Produkty</a>
+    <a href="{{ url_for('admin.admin_orders') }}">📦 Objednávky</a>
+    <a href="{{ url_for('admin.users') }}">👥 Uživatelé</a>
+
+    <a href="{{ url_for('admin.manage_discounts') }}">💸 Slevové kupony</a>
+    <a href="{{ url_for('auth_admin.admin_logout') }}">🚪 Odhlásit</a>
+  </div>
+</nav>

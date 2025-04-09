@@ -1,4 +1,4 @@
-{% extends "base_html_section/layout.html" %} {% block title %}Profil
+{% extends "base_html_section/layout_admin.html" %} {% block title %}Profil
 zákazníka{% endblock %} {% block css %}
 <link
   rel="stylesheet"
@@ -88,6 +88,6 @@ zákazníka{% endblock %} {% block css %}
     >
   </div>
 </div>
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script src="{{ url_for('static', filename='admin/js/admin_user_detail.js') }}"></script>
 {% endblock %}

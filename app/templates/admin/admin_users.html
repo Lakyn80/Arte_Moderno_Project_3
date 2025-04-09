@@ -1,32 +1,35 @@
-{% extends "base_html_section/layout.html" %} {% block title %}Databáze
-uživatelů{% endblock %} {% block css %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/admin/admin_users.css') }}"
-/>
-{% endblock %} {% block content %}
-<h2>👤 Databáze uživatelů</h2>
+{% extends "base_html_section/layout_admin.html" %} {% block title %}Uživatelé{%
+endblock %} {% block content %}
+<h2 class="admin-heading">👥 Přehled uživatelů</h2>
 
 <table class="admin-table">
   <thead>
     <tr>
       <th>ID</th>
-      <th>Uživatelské jméno</th>
-      <th>Email</th>
+      <th>Jméno</th>
+      <th>E-mail</th>
       <th>Role</th>
+      <th>Registrován</th>
+      <th>Akce</th>
     </tr>
   </thead>
   <tbody>
     {% for user in users %}
     <tr>
       <td>{{ user.id }}</td>
-      <td>{{ user.username }}</td>
+      <td>{{ user.first_name }} {{ user.last_name }}</td>
       <td>{{ user.email }}</td>
       <td>{{ user.role }}</td>
+      <td>{{ user.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+      <td>
+        <a
+          href="{{ url_for('admin.user_detail', user_id=user.id) }}"
+          class="btn-admin"
+          >Detail</a
+        >
+      </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
-{% endblock %} {% block scripts %}
-<script src="{{ url_for('static', filename='admin/js/admin_users.js') }}"></script>
 {% endblock %}

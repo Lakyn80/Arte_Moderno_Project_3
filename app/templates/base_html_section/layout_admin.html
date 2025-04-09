@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <title>Admin | {% block title %}{% endblock %}</title>
+
+    <!-- JEDINÝ CSS PRO ADMIN -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/admin/admin_base.css') }}"
+    />
+    {% block css %}{% endblock %}
+  </head>
+  <body>
+    <!-- ADMIN NAVIGACE -->
+    {% include "base_html_section/navbar_admin.html" %}
+
+    <!-- FLASH ZPRÁVY -->
+    <div class="flash-container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="flash-message alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+    </div>
+
+    <!-- HLAVNÍ OBSAH -->
+    <main class="main-content">{% block content %}{% endblock %}</main>
+
+    <!-- ADMIN SCRIPTY -->
+    <script src="{{ url_for('static', filename='css/base_css_section/JS/base_js_section.js') }}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>
