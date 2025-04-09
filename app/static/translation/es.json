@@ -93,5 +93,16 @@
   "back_to_orders": "Volver a mis pedidos",
   "username": "Nombre de usuario",
   "password": "Contraseña",
-  "register_button": "Registrarse"
+  "register_button": "Registrarse",
+  "profile_name": "Nombre",
+  "profile_first_name": "Nombre",
+  "profile_last_name": "Apellido",
+  "profile_phone": "Teléfono",
+  "profile_address": "Dirección de entrega",
+  "profile_billing_address": "Dirección de facturación",
+  "profile_city": "Ciudad",
+  "profile_postal_code": "Código postal",
+  "profile_country": "País",
+  "profile_company_id": "ID de la empresa (IČO)",
+  "profile_vat_id": "ID de IVA (DIČ)"
 }

@@ -12,7 +12,7 @@ g.t["profile_title"] }}{% endblock %} {% block content %}
   {{ form.hidden_tag() }}
 
   <div class="form-group">
-    <label for="email">📧 E-mail</label>
+    <label for="email">📧 {{ g.t["profile_email"] }}</label>
     <input
       type="email"
       id="email"
@@ -24,56 +24,68 @@ g.t["profile_title"] }}{% endblock %} {% block content %}
   </div>
 
   <div class="form-group">
-    {{ form.first_name.label }} {{ form.first_name(class_="form-control") }}
+    {{ form.first_name.label(text=g.t["profile_first_name"]) }} {{
+    form.first_name(class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.last_name.label }} {{ form.last_name(class_="form-control") }}
+    {{ form.last_name.label(text=g.t["profile_last_name"]) }} {{
+    form.last_name(class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.phone.label }} {{ form.phone(class_="form-control") }}
+    {{ form.phone.label(text=g.t["profile_phone"]) }} {{
+    form.phone(class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.address.label }} {{ form.address(class_="form-control") }}
+    {{ form.address.label(text=g.t["profile_address"]) }} {{
+    form.address(class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.billing_address.label }} {{
+    {{ form.billing_address.label(text=g.t["profile_billing_address"]) }} {{
     form.billing_address(class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.city.label }} {{ form.city(class_="form-control") }}
+    {{ form.city.label(text=g.t["profile_city"]) }} {{
+    form.city(class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.postal_code.label }} {{ form.postal_code(class_="form-control") }}
+    {{ form.postal_code.label(text=g.t["profile_postal_code"]) }} {{
+    form.postal_code(class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.country.label }} {{ form.country(class_="form-control") }}
+    {{ form.country.label(text=g.t["profile_country"]) }} {{
+    form.country(class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.company.label }} {{ form.company(class_="form-control") }}
+    {{ form.company.label(text=g.t["profile_company"]) }} {{
+    form.company(class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.company_id.label }} {{ form.company_id(class_="form-control") }}
+    {{ form.company_id.label(text=g.t["profile_company_id"]) }} {{
+    form.company_id(class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.vat_id.label }} {{ form.vat_id(class_="form-control") }}
+    {{ form.vat_id.label(text=g.t["profile_vat_id"]) }} {{
+    form.vat_id(class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.note.label }} {{ form.note(class_="form-control") }}
+    {{ form.note.label(text=g.t["profile_note"]) }} {{
+    form.note(class_="form-control") }}
   </div>
 
   <div class="form-group">
-    {{ form.date_of_birth.label }} {{ form.date_of_birth(class_="form-control",
+    {{ form.date_of_birth.label(text=g.t["profile_date_of_birth"]) }} {{
+    form.date_of_birth(class_="form-control",
     value=(birthdate.strftime('%Y-%m-%d') if birthdate else '')) }}
   </div>
 

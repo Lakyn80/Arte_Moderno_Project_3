@@ -93,5 +93,16 @@
   "back_to_orders": "Назад к заказам",
   "username": "Имя пользователя",
   "password": "Пароль",
-  "register_button": "Зарегистрироваться"
+  "register_button": "Зарегистрироваться",
+  "profile_name": "Имя",
+  "profile_first_name": "Имя",
+  "profile_last_name": "Фамилия",
+  "profile_phone": "Телефон",
+  "profile_address": "Адрес доставки",
+  "profile_billing_address": "Платёжный адрес",
+  "profile_city": "Город",
+  "profile_postal_code": "Почтовый индекс",
+  "profile_country": "Страна",
+  "profile_company_id": "ИНН / IČO",
+  "profile_vat_id": "НДС / DIČ"
 }
