@@ -7,21 +7,23 @@
 
 html,
 body {
-  height: auto;
-  min-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-body {
+  height: 100%;
   font-family: "Montserrat", sans-serif;
   color: #333;
   background-color: #eef2f0;
+  overflow-x: hidden;
 }
 
 a {
   text-decoration: none;
   color: inherit;
+}
+
+/* ========== WRAPPER PRO CELÝ OBSAH STRÁNKY ========== */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* ========== CLIENT NAVBAR ========== */
@@ -37,7 +39,7 @@ a {
   width: 100%;
   top: 0;
   z-index: 1000;
-  height: 80px;
+  height: 60px;
 }
 
 .navbar-logo img {
@@ -144,15 +146,12 @@ a {
 .alert-success {
   background-color: #28a745;
 }
-
 .alert-error {
   background-color: #dc3545;
 }
-
 .alert-info {
   background-color: #17a2b8;
 }
-
 .alert-warning {
   background-color: #ffc107;
   color: black;
@@ -169,10 +168,11 @@ a {
   }
 }
 
-/* ========== LAYOUT KONTEJNER ========== */
+/* ========== MAIN CONTENT FLEX ========== */
 .main-content {
-  padding-top: 80px;
-  padding-bottom: 40px;
+  flex: 1;
+  padding-top: 103px;
+  padding-bottom: 0px;
 }
 
 /* ========== FOOTER ========== */
@@ -180,7 +180,7 @@ a {
   width: 100%;
   background-color: #f9f9f9;
   border-top: 1px solid #eaeaea;
-  padding: 0.7rem 0;
+  padding: 1.4rem 0;
   text-align: center;
 }
 

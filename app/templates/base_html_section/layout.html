@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>ArtModerno | {% block title %}{% endblock %}</title>
-
+    <title>Arte Moderno | {% block title %}{% endblock %}</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/base_css_section/base.css') }}"
@@ -12,43 +11,43 @@
     {% block css %}{% endblock %}
   </head>
   <body>
-    {% include "base_html_section/client_navbar.html" %}
+    <div class="page-wrapper">
+      {% include "base_html_section/client_navbar.html" %}
 
-    <div class="flash-container">
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
-      <div class="flash-message alert-{{ category }}">{{ message }}</div>
-      {% endfor %} {% endif %} {% endwith %}
-    </div>
-
-    <main class="main-content">{% block content %}{% endblock %}</main>
-
-    <footer class="footer">
-      <div class="footer-content">
-        <p class="footer-text">© 2025 Arte Moderno. Všechna práva vyhrazena.</p>
-        <div class="social-links">
-          <a href="#" class="social-link">
-            <img
-              src="{{ url_for('static', filename='logo/facebook.svg') }}"
-              alt="Facebook"
-            />
-          </a>
-          <a href="#" class="social-link">
-            <img
-              src="{{ url_for('static', filename='logo/skill-icons_instagram.svg') }}"
-              alt="Instagram"
-            />
-          </a>
-          <a href="#" class="social-link">
-            <img
-              src="{{ url_for('static', filename='logo/x.svg') }}"
-              alt="Twitter/X"
-            />
-          </a>
-        </div>
+      <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div class="flash-message alert-{{ category }}">{{ message }}</div>
+        {% endfor %} {% endif %} {% endwith %}
       </div>
-    </footer>
 
+      <main class="main-content">{% block content %}{% endblock %}</main>
+
+      <footer class="footer">
+        <div class="footer-content">
+          <p class="footer-text">
+            © 2025 Arte Moderno. Všechna práva vyhrazena.
+          </p>
+          <div class="social-links">
+            <a href="#" class="social-link"
+              ><img
+                src="{{ url_for('static', filename='logo/facebook.svg') }}"
+                alt="Facebook"
+            /></a>
+            <a href="#" class="social-link"
+              ><img
+                src="{{ url_for('static', filename='logo/skill-icons_instagram.svg') }}"
+                alt="Instagram"
+            /></a>
+            <a href="#" class="social-link"
+              ><img
+                src="{{ url_for('static', filename='logo/x.svg') }}"
+                alt="Twitter/X"
+            /></a>
+          </div>
+        </div>
+      </footer>
+    </div>
     <script src="{{ url_for('static', filename='css/base_css_section/JS/base_js_section.js') }}"></script>
     {% block scripts %}{% endblock %}
   </body>
